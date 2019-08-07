@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Unofficial Discord Bug Searching Tool</title>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.3.1/css/foundation.min.css" integrity="sha256-itWEYdFWzZPBG78bJOOiQIn06QCgN/F0wMDcC4nOhxY=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous" />
+    <link rel="stylesheet" type="text/css" href="css/bugsearch.css" />
+    <link rel="shortcut icon" href="images/favicon.ico" />
+    <link rel="icon" type="image/png" href="images/favicon-192x192.png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="images/apple-touch-icon-180x180.png" sizes="180x180" />
+    <script>
+      // Put Google Analitics here.
+    </script>
+  </head>
+  <body>
+    <div class="top-bar">
+      <div class="top-bar-left">
+        <ul class="menu show-for-small-only">
+          <li class="menu-text">Unofficial Bug Searching Tool</li>
+          <li class="act-pg"><a href="./"><i class="far fa-plus-square"></i></a></li>
+          <!-- <li><a href="./edit"><i class="far fa-edit"></i></a></li> -->
+          <li><a id="switch-mobile"><i class="far fa-sun"></i></a></li>
+        </ul>
+        <ul class="menu show-for-medium">
+          <li class="menu-text">Unofficial Bug Searching Tool</li>
+          <li class="act-pg"><a href="./"><i class="far fa-plus-square"></i> Create</a></li>
+          <!-- <li><a href="./edit"><i class="far fa-edit"></i> Edit</a></li> -->
+        </ul>
+      </div>
+      <div class="top-bar-right show-for-medium">
+        <ul class="menu">
+          <li><a id="switch-desktop"><i class="far fa-sun"></i> Light Mode</a></li>
+        </ul>
+      </div>
+    </div><br />
+    <div class="column row" id="content">
+      <h5>Search for a Bug Report</h5>
+      <div class="callout mbox">
+        <strong>Remember:</strong>
+        <ul>
+          <li>Alternatively you can check the Trello boards and/or bug report channels: <div class="small button-group trello">
+          <a class="button" target="_blank" href="https://trello.com/b/AExxR9lU/desktop-bugs"><i class="fas fa-desktop"></i> Desktop</a>
+          <a class="button" target="_blank" href="https://trello.com/b/Vqrkz3KO/android-beta-bugs"><i class="fab fa-android"></i> Android</a>
+          <a class="button" target="_blank" href="https://trello.com/b/vLPlnX60/ios-testflight-bugs"><i class="fab fa-apple"></i> iOS</a>
+          <a class="button" target="_blank" href="https://trello.com/b/UyU76Esh/linux-bugs"><i class="fab fa-linux"></i> Linux</a>
+          <a class="button" target="_blank" href="https://trello.com/b/Fb0LyRnD/store-bugs"><i class="fas fa-store-alt"></i> Store</a>
+          <a class="button" target="_blank" href="https://trello.com/b/k6jr4NyY/overlay-bugs"><i class="fas fa-window-restore"></i> Overlay</a>
+        </div></li>
+        </ul>
+        <a class="button" data-open="trello-modal">Open Trello API Key+Token</a>
+      </div>
+      <label for="desc-field">Search:</label>
+      <p class="help-text" id="desc-help">Use keywords like "Nickname", "Quick Switcher", "Uncaught Exception"</p>
+      <input type="text" id="desc-field" aria-describedby="desc-help" required>
+
+      <div id="report-list">
+
+      </div>
+    </div>
+
+    <div class="reveal" id="trello-modal" data-reveal>
+      <h4>Please enter your Trello Key + Token</h4>
+      <dl>
+        <dt>Enter Key+Token</dt>
+        <dd>
+          <ul>
+            <li id="modal-key">Key:
+              <input type="text" id="input-key" aria-describedby="modal-key" required>
+            </li>
+            <li id="modal-token">Token:
+              <input type="text" id="input-token" aria-describedby="modal-token" required></li>
+          </ul>
+        </dd>
+        <dt>How to get Key+Token</dt>
+        <dd>
+          <ul>
+            <li>Make sure you are signed into Trello on the web.</li>
+            <li>Head over to <a href="https://trello.com/app-key">https://trello.com/app-key</a></li>
+            <li>Accept the prompt if you haven't previously done it.</li>
+            <li>Copy the displayed Key at the top, and place that into the Key textbox.</li>
+            <li>Below that should be some info on the Token, with a link to generate a key.</li>
+            <li>Once you allow it, a screen will appear with a token, copy and paste that into the token box.</li>
+          </ul>
+        </dd>
+      </dl>
+      <button type="button" class="close-button" data-close aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.3.1/js/foundation.min.js" integrity="sha256-Nd2xznOkrE9HkrAMi4xWy/hXkQraXioBg9iYsBrcFrs=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.1/clipboard.min.js"></script>
+    <script src="js/bugreport.js"></script>
+    <script>
+      $(document).foundation();
+      $(document).ready(pageLoad('create'));
+    </script>
+  </body>
+</html>
