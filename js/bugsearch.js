@@ -7,16 +7,6 @@
         $('#input-key').val(trelloKey);
         $('#input-token').val(trelloToken);
     }
-    else {
-        alert('This browser does not support Localstorage. Keys/Tokens will have to be manually inputted in each time.');
-    }
-
-    // Show Trello Token
-    if (!trelloKey || trelloKey == "" || !trelloToken || trelloToken == "") {
-        $(document).ready(function () {
-            $('#btn-trello-modal').trigger('click');
-        });
-    }
 })();
 
 function keySearch(evt) {
@@ -29,7 +19,7 @@ function keySearch(evt) {
 
 function searchTrello() {
     var query = $('#search-field').val();
-    if (query.trim() == "") { return alert('Please fill some info in.'); }
+    if (query.trim() == "") { return; }
 
     var board = $('#board-field').val();
     var trelloKey = $('#input-key').val();
@@ -39,26 +29,32 @@ function searchTrello() {
         method: 'GET',
         url: 'https://api.trello.com/1/search',
         data: {
-          query: query,
-          idBoards: board,
-          key: trelloKey,
-          token: trelloToken,
+            query: query,
+            idBoards: board,
+            key: trelloKey,
+            token: trelloToken,
 
-          cards_limit: '25',
-          card_list: true,
-          card_attachments: true
-          /* Fill this */
-
+            cards_limit: '25',
+            card_list: true,
+            // card_attachments: true
+            /* Fill this */
         }
-      };
+    };
     $.ajax(options)
       .done(function (data) {
         $('#report-list').empty();
-        if (data.cards.length == 0) { return alert('No Cards were returned.'); }
+        if (data.cards.length == 0) {
+            $('#report-list').append(
+                '<div class="report-item callout mbox">' +
+                    '<p class="report-content"><strong>No cards found.</strong></p>' +
+                '</div>'
+            );
+            return;
+        }
         data.cards.forEach(function (card) {
             $('#report-list').append(
                 '<div class="report-item callout mbox">' +
-                    '<a class="report-title" href="' + card.shortUrl + '">' + card.name + '</a>' +
+                    '<a class="report-title" onclick="openCard(\'' + card.shortLink + '\')">' + card.name + '</a>' +
                     '<p class="report-content">' +
                         (card.closed ? '<strong>This ticket is archived.</strong><br>' : '') +
                         (card.list.name ? '<strong>List:</strong> ' + card.list.name + '' : '') +
@@ -69,8 +65,60 @@ function searchTrello() {
 
       })
       .fail(function () {
-        // Error
+        $('#report-list').append(
+            '<div class="report-item callout mbox">' +
+                '<p class="report-content"><strong>An error occurred while trying to find cards.</strong></p>' +
+            '</div>'
+        );
       })
+}
+
+function openCard(cardID) {
+    var trelloKey = $('#input-key').val();
+    var trelloToken = $('#input-token').val();
+
+    var options = {
+        method: 'GET',
+        url: 'https://api.trello.com/1/cards/'+cardID,
+        data: {
+          fields: 'desc,name,shortUrl,labels,closed',
+          attachments: 'true',
+          attachment_fields: 'all',
+          members: 'false',
+          membersVoted: 'false',
+          checkItemStates: 'false',
+          checklists: 'none',
+          checklist_fields: 'all',
+          board: 'true',
+          board_fields: 'name,url',
+          list: 'true',
+
+          key: trelloKey,
+          token: trelloToken,
+        }
+      };
+    $.ajax(options)
+        .done(function (data) {
+            let formatted = data.desc
+                .replace(/\n/g, '<br>')
+                .replace(/####Steps to reproduce:/g, '<strong>Steps to reproduce:</strong>')
+                .replace(/####Expected result:/g, '<strong>Expected result:</strong>')
+                .replace(/####Actual result:/g, '<strong>Actual result:</strong>')
+                .replace(/####Client settings:/g, '<strong>Client settings:</strong>')
+                .replace(/####System settings:/g, '<strong>System settings:</strong>');
+            $('#card-content').empty();
+            $('#card-content').append(
+                '<h4 class="card-title">'+ data.name + '</h4>' +
+                '<h6>Board: '+ data.board.name + '</h6>' +
+                '<label>List: '+ data.list.name  + '</label>' +
+                '<hr>' +
+                (data.closed ? '<div class="banner">This card is archived</div>' : '') +
+                '<p>' + formatted + '<br><a href="' + data.shortUrl + '">Trello Link</a>' + '</p>'
+            )
+            $('#card-modal').foundation('open');
+            // var popup = new Foundation.Reveal($('#card-modal'));
+            // popup.open();
+        })
 }
 
 function updateTrello() {

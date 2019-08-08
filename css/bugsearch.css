@@ -18,23 +18,11 @@ body.light {
     color: #0a0a0a;
 }
 
-h4, h5 {
+h4, h5, h6 {
     font-family: inherit;
     font-weight: 600;
 }
 
-.bug-syntax {
-    white-space: pre-wrap;
-}
-
-.syntaxbox {
-    min-height: 3.750rem;
-    border-radius: 0.1875rem;
-}
-
-body.light .syntaxbox {
-    background-color: #eaeaea;
-}
 
 input:required:invalid {
     border-color: #ff0000;
@@ -86,6 +74,10 @@ label {
     color: #ffffff;
 }
 
+hr {
+    margin: 10px auto;
+}
+
 .report-item .report-title {
     font-size: 1rem;
 }
@@ -120,7 +112,7 @@ body.light .help-text {
     background-color: #5970c1;
 }
 
-.button-group a {
+.trello.button-group a {
     width: 5.6rem;
 }
 
@@ -230,4 +222,10 @@ body.light .mbox, body.light .reveal {
 
 .input-group-label {
     font-size: 0.75rem;
+}
+
+.banner {
+    text-align: center;
+    width: 100%;
+    background: #7289da;
 }
