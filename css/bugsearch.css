@@ -23,7 +23,6 @@ h4, h5, h6 {
     font-weight: 600;
 }
 
-
 input:required:invalid {
     border-color: #ff0000;
 }
@@ -228,4 +227,9 @@ body.light .mbox, body.light .reveal {
     text-align: center;
     width: 100%;
     background: #7289da;
+}
+
+.card-title {
+    color: #7289da;
+    width: calc(100% - 20px);
 }
