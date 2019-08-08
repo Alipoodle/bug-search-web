@@ -191,6 +191,7 @@ function pageLoad(page) {
         case "index":
             $('body').on('blur', 'input[id*="input-"]', updateTrello);
             $('body').on('blur', '#search-field', searchTrello);
+            $('body').on('input', '#board-field', searchTrello);
             $('body').on('keypress', '#search-field', keySearch)
             break;
     }
