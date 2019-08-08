@@ -44,7 +44,7 @@ function searchTrello() {
           key: trelloKey,
           token: trelloToken,
 
-          boards_limit: '15',
+          cards_limit: '25',
           card_list: true,
           card_attachments: true
           /* Fill this */
