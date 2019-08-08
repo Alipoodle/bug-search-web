@@ -14,7 +14,7 @@ body {
 }
 
 body.light {
-    background-color: #fefefe; 
+    background-color: #fefefe;
     color: #0a0a0a;
 }
 
@@ -85,6 +85,14 @@ label {
     font-weight: 600;
     color: #ffffff;
 }
+
+.report-item .report-title {
+    font-size: 1rem;
+}
+.report-item .report-content {
+    font-size: 13px;
+}
+
 
 body.light label {
     color: #0a0a0a;
