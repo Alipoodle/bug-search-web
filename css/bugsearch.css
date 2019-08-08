@@ -233,3 +233,33 @@ body.light .mbox, body.light .reveal {
     color: #7289da;
     width: calc(100% - 20px);
 }
+
+.label {
+    border-radius: 15px;
+    font-weight: 600;
+    margin: 0 3px 1px 3px
+}
+.label-sky {
+    background: #00c2e0;
+}
+.label-red {
+    background: #eb5a46;
+}
+.label-blue {
+    background: #0079bf;
+}
+.label-lime {
+    background: #51e898;
+}
+.label-pink {
+    background: #ff78cb;
+}
+.label-green {
+    background: #61bd4f;
+}
+.label-orange {
+    background: #ff9f1a;
+}
+.label-yellow {
+    background: #b4a21f;
+}

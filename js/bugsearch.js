@@ -73,6 +73,25 @@ function searchTrello() {
       })
 }
 
+function formatDesc(desc) {
+    let formatted = desc
+        .replace(/\n/g, '<br>')
+        .replace(/####Steps to reproduce:/g, '<strong>Steps to reproduce:</strong>')
+        .replace(/####Expected result:/g, '<strong>Expected result:</strong>')
+        .replace(/####Actual result:/g, '<strong>Actual result:</strong>')
+        .replace(/####Client settings:/g, '<strong>Client settings:</strong>')
+        .replace(/####System settings:/g, '<strong>System settings:</strong>');
+    return formatted;
+}
+
+function formatLabels(labels) {
+    var htmlLabel = [];
+    labels.forEach(function(label) {
+        htmlLabel.push('<span class="label label-'+label.color+'">' + label.name + '</span>');
+    });
+    return htmlLabel;
+}
+
 function openCard(cardID) {
     var trelloKey = $('#input-key').val();
     var trelloToken = $('#input-token').val();
@@ -99,18 +118,16 @@ function openCard(cardID) {
       };
     $.ajax(options)
         .done(function (data) {
-            let formatted = data.desc
-                .replace(/\n/g, '<br>')
-                .replace(/####Steps to reproduce:/g, '<strong>Steps to reproduce:</strong>')
-                .replace(/####Expected result:/g, '<strong>Expected result:</strong>')
-                .replace(/####Actual result:/g, '<strong>Actual result:</strong>')
-                .replace(/####Client settings:/g, '<strong>Client settings:</strong>')
-                .replace(/####System settings:/g, '<strong>System settings:</strong>');
+            formatted = formatDesc(data.desc);
+            labels    = formatLabels(data.labels);
+
+            
             $('#card-content').empty();
             $('#card-content').append(
                 '<h4 class="card-title">'+ data.name + '</h4>' +
                 '<h6>Board: '+ data.board.name + '</h6>' +
                 '<label>List: '+ data.list.name  + '</label>' +
+                (labels ? '<div class="card-badges">' + labels.join("") +'</div>' : '') +
                 '<hr>' +
                 (data.closed ? '<div class="banner">This card is archived</div>' : '') +
                 '<p>' + formatted + '<br><a href="' + data.shortUrl + '">Trello Link</a>' + '</p>'
