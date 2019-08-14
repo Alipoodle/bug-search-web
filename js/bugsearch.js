@@ -177,6 +177,15 @@ function openCard(cardID, ignore = false) {
             // var popup = new Foundation.Reveal($('#card-modal'));
             // popup.open();
         })
+        .fail(function (e) {
+            history.back();
+            $('#report-list').empty();
+            $('#report-list').append(
+                '<div class="report-item callout mbox">' +
+                    '<p class="report-content"><strong>An error occurred while trying to find the specific card.</strong><br>Provided Error: ' + escapeHTML(e.responseText) + '</p>' +
+                '</div>'
+            );
+          })
 }
 
 function updateTrello() {
