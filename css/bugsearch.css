@@ -223,13 +223,13 @@ body.light .mbox, body.light .reveal {
     font-size: 0.75rem;
 }
 
-.banner {
+#archived-banner {
     text-align: center;
     width: 100%;
     background: #7289da;
 }
 
-.card-title {
+#card-title {
     color: #7289da;
     width: calc(100% - 20px);
 }

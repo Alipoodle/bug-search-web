@@ -7,7 +7,45 @@
         $('#input-key').val(trelloKey);
         $('#input-token').val(trelloToken);
     }
+
+    window.onpopstate = function(e){
+        if (e.state && e.state.card) { openCard(e.state.card, true); }
+        else {
+            $('#card-modal').foundation('close');
+        }
+    };
+
+    $('body').on('blur',     'input[id*="input-"]', updateTrello);
+    $('body').on('blur',     '#search-field',       searchTrello);
+    $('body').on('input',    '#board-field',        searchTrello);
+    $('body').on('keypress', '#search-field',       keySearch);
+    $('body').on('click',    'a[id*="switch-"]',    switchMode);
+    $('body').on('click', '.reveal-overlay[style^=display], #card-modal .close-button', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        history.back()
+    });
+    if (loadTheme()) {
+        switchMode();
+    }
+
+    function gup( name, url ) {
+        if (!url) url = location.href;
+        name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+        var regexS = "[\\?&]"+name+"=([^&#]*)";
+        var regex = new RegExp( regexS );
+        var results = regex.exec( url );
+        return results == null ? null : results[1];
+    }
+
+    var startCard = gup('card');
+    if (startCard) {
+        history.replaceState({}, "Unofficial Discord Bug Searching Tool", "./");
+        openCard(startCard);
+    }
 })();
+
+
 
 function keySearch(evt) {
     var $target = $(evt.target);
@@ -54,26 +92,28 @@ function searchTrello() {
         data.cards.forEach(function (card) {
             $('#report-list').append(
                 '<div class="report-item callout mbox">' +
-                    '<a class="report-title" onclick="openCard(\'' + card.shortLink + '\')">' + card.name + '</a>' +
+                    '<a class="report-title" onclick="openCard(\'' + escapeHTML(card.shortLink) + '\')">' + escapeHTML(card.name) + '</a>' +
                     '<p class="report-content">' +
                         (card.closed ? '<strong>This ticket is archived.</strong><br>' : '') +
-                        (card.list.name ? '<strong>List:</strong> ' + card.list.name + '' : '') +
+                        (card.list.name ? '<strong>List:</strong> ' + escapeHTML(card.list.name) + '' : '') +
                     '</p>' +
                 '</div>'
             );
         })
 
       })
-      .fail(function () {
+      .fail(function (e) {
+        $('#report-list').empty();
         $('#report-list').append(
             '<div class="report-item callout mbox">' +
-                '<p class="report-content"><strong>An error occurred while trying to find cards.</strong></p>' +
+                '<p class="report-content"><strong>An error occurred while trying to find cards.</strong><br>Provided Error: ' + escapeHTML(e.responseText) + '</p>' +
             '</div>'
         );
       })
 }
 
 function formatDesc(desc) {
+    var converter = new showdown.Converter();
     let formatted = desc
         .replace(/\n/g, '<br>')
         .replace(/####Steps to reproduce:/g, '<strong>Steps to reproduce:</strong>')
@@ -81,18 +121,21 @@ function formatDesc(desc) {
         .replace(/####Actual result:/g, '<strong>Actual result:</strong>')
         .replace(/####Client settings:/g, '<strong>Client settings:</strong>')
         .replace(/####System settings:/g, '<strong>System settings:</strong>');
+    formatted = converter.makeHtml(formatted);
     return formatted;
 }
 
 function formatLabels(labels) {
     var htmlLabel = [];
     labels.forEach(function(label) {
-        htmlLabel.push('<span class="label label-'+label.color+'">' + label.name + '</span>');
+        htmlLabel.push('<span class="label label-'+escapeHTML(label.color)+'">' + escapeHTML(label.name) + '</span>');
     });
     return htmlLabel;
 }
 
-function openCard(cardID) {
+function openCard(cardID, ignore = false) {
+    if (!ignore) window.history.pushState({card: cardID}, 'Unofficial Discord Bug Searching Tool', '?card='+cardID);
+
     var trelloKey = $('#input-key').val();
     var trelloToken = $('#input-token').val();
 
@@ -121,17 +164,15 @@ function openCard(cardID) {
             formatted = formatDesc(data.desc);
             labels    = formatLabels(data.labels);
 
-            
             $('#card-content').empty();
-            $('#card-content').append(
-                '<h4 class="card-title">'+ data.name + '</h4>' +
-                '<h6>Board: '+ data.board.name + '</h6>' +
-                '<label>List: '+ data.list.name  + '</label>' +
-                (labels ? '<div class="card-badges">' + labels.join("") +'</div>' : '') +
-                '<hr>' +
-                (data.closed ? '<div class="banner">This card is archived</div>' : '') +
-                '<p>' + formatted + '<br><a href="' + data.shortUrl + '">Trello Link</a>' + '</p>'
-            )
+            $('#card-title').text(data.name);
+            $('#card-board').text(data.board.name);
+            $('#card-list').text(data.list.name);
+            $('#card-badges').html(labels.join(""));
+            if (data.closed) { $('#archived-banner').removeClass('hidden'); }
+            else             { $('#archived-banner').addClass('hidden'); }
+            $('#card-content').html(formatted);             // Need to fix some issues with this and XSS
+            $('#card-link').attr('href', encodeURI(data.shortUrl));
             $('#card-modal').foundation('open');
             // var popup = new Foundation.Reveal($('#card-modal'));
             // popup.open();
@@ -184,35 +225,19 @@ function switchMode() {
     setTheme();
 }
 
-function pageLoad(page) {
-    var cb_btn = '';
-    var st = '';
-    switch (page) {
-        case "index":
-            $('body').on('blur', 'input[id*="input-"]', updateTrello);
-            $('body').on('blur', '#search-field', searchTrello);
-            $('body').on('input', '#board-field', searchTrello);
-            $('body').on('keypress', '#search-field', keySearch)
-            break;
-    }
-    $('body').on('click', 'a[id*="switch-"]', switchMode);
-    if (loadTheme()) {
-        switchMode();
-    }
-}
 
-// cb_btn = '#edit-copy-btn';
-// st = '#edit-syntax';
+var entityMap = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+    '/': '&#x2F;',
+    '=': '&#x3D;'
+  };
 
-// var cb = new ClipboardJS(cb_btn, {
-//     text: function(trigger) {
-//         return $(st).text();
-//     }
-// });
-// cb.on('success', function(e) {
-//     $(e.trigger).html('Copied');
-//     ga('send', 'event', 'syntax', 'copy');
-//     setTimeout(function() {
-//         $(e.trigger).html('Copy');
-//     }, 2000);
-// });
+  function escapeHTML (string) {
+    return String(string).replace(/[&<>"'=\/]/g, function fromEntityMap (s) {
+      return entityMap[s];
+    });
+  }

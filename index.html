@@ -49,8 +49,9 @@
         </ul>
       </div>
       <label for="search-field">Search:</label>
-      <p class="help-text" id="search-help">Use keywords like "Nickname", "Quick Switcher", "Uncaught Exception"</p>
-      <input type="text" id="search-field" aria-describedby="search-help" required>
+      <p class="help-text" id="search-help">Use keywords like "Nickname", "Quick Switcher", "Uncaught Exception"<br>
+        You can improve searches by using Trello's Special Operators by following this <a href="https://help.trello.com/article/808-searching-for-cards-all-boards">Guide</a></p>
+      <input type="text" id="search-field" autocomplete="off" aria-describedby="search-help" required>
 
       <label for="board-field">Board:</label>
       <p class="help-text" id="board-help">Select the board you would like to search on.</p>
@@ -104,8 +105,18 @@
     </div>
 
     <div class="reveal" id="card-modal" data-reveal-id="card-modal" data-reveal>
-      <div id="card-content">
-
+      <div id="card">
+        <h4 id="card-title"></h4>
+        <h6>Board: <span id="card-board"></span></h6>
+        <label>List: <span id="card-list"></span></label>
+        <div id="card-badges"></div>
+        <hr>
+        <div id="archived-banner">This card is archived</div>
+        <p>
+          <span id='card-content'></span>
+          <br>
+          <a id='card-link'>Trello Link</a>
+        </p>
       </div>
       <button type="button" class="close-button" data-close aria-label="Close">
         <span aria-hidden="true">&times;</span>
@@ -114,10 +125,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.3.1/js/foundation.min.js" integrity="sha256-Nd2xznOkrE9HkrAMi4xWy/hXkQraXioBg9iYsBrcFrs=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.1/clipboard.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js"></script>
     <script src="js/bugsearch.js"></script>
     <script>
       $(document).foundation();
-      $(document).ready(pageLoad('index'));
     </script>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-145328931-1"></script>
