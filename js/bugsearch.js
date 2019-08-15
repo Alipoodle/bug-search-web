@@ -25,7 +25,7 @@
         e.stopPropagation();
         history.back()
     });
-    $('div.reveal-overlay[style^=display]').on('click', function (e) {
+    $('body').on('click', function (e) {
         if (e.target == $('div.reveal-overlay[style^=display]')[0]) {
             e.preventDefault();
             e.stopPropagation();
