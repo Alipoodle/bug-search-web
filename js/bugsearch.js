@@ -146,6 +146,19 @@ function formatLabels(labels) {
     return htmlLabel;
 }
 
+function formatAttachments(attachments) {
+    var htmlAttachments = [];
+    attachments.forEach(function(attachment, i) {
+        var youtubeURL = attachment.url.match('^(https?://)?(www.)?(youtube.com|youtu.?be)/.+$')
+        if (youtubeURL) {
+            htmlAttachments.push('<a href="' + encodeURI(attachment.url) + '">Video '+(i+1)+'</a>');
+        } else {
+            htmlAttachments.push('<a href="' + encodeURI(attachment.url) + '">Image '+(i+1)+'</a>');
+        }
+    })
+    return htmlAttachments;
+}
+
 function openCard(cardID, ignore = false) {
     if (!ignore) window.history.pushState({card: cardID}, 'Unofficial Discord Bug Searching Tool', '?card='+cardID);
 
@@ -158,7 +171,7 @@ function openCard(cardID, ignore = false) {
         data: {
           fields: 'desc,name,shortUrl,labels,closed',
           attachments: 'true',
-          attachment_fields: 'all',
+          attachment_fields: 'url',
           members: 'false',
           membersVoted: 'false',
           checkItemStates: 'false',
@@ -174,8 +187,9 @@ function openCard(cardID, ignore = false) {
       };
     $.ajax(options)
         .done(function (data) {
-            formatted = formatDesc(data.desc);
-            labels    = formatLabels(data.labels);
+            formatted   = formatDesc(data.desc);
+            labels      = formatLabels(data.labels);
+            attachments = formatAttachments(data.attachments);
 
             $('#card-content').empty();
             $('#card-title').text(data.name);
@@ -186,6 +200,7 @@ function openCard(cardID, ignore = false) {
             else             { $('#archived-banner').addClass('hidden'); }
             $('#card-content').html(formatted);             // Need to fix some issues with this and XSS
             $('#card-link').attr('href', encodeURI(data.shortUrl));
+            $('#card-attachments').html(attachments.join(" "));
             $('#card-modal').foundation('open');
             // var popup = new Foundation.Reveal($('#card-modal'));
             // popup.open();
