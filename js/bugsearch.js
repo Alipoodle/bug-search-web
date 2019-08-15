@@ -58,17 +58,24 @@ function keySearch(evt) {
     var $target = $(evt.target);
     var keyCode = evt.which || evt.keyCode;
     if (keyCode == 13) {
-        $target.blur(); // Auto triggers - searchTrello();
+        $target.blur();
     }
 }
 
-function searchTrello() {
+var pageNum = 0;
+function searchTrello(newPage = false) {
     var query = $('#search-field').val();
     if (query.trim() == "") { return; }
 
     var board = $('#board-field').val();
     var trelloKey = $('#input-key').val();
     var trelloToken = $('#input-token').val();
+
+    if (newPage && typeof newPage != 'object') {
+        pageNum++;
+        $('#board-field')[0].scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
+    }
+    else         { pageNum = 0; }
 
     var options = {
         method: 'GET',
@@ -81,8 +88,7 @@ function searchTrello() {
 
             cards_limit: '25',
             card_list: true,
-            // card_attachments: true
-            /* Fill this */
+            cards_page: pageNum
         }
     };
     $.ajax(options)
@@ -121,7 +127,7 @@ function searchTrello() {
 
 function formatDesc(desc) {
     var converter = new showdown.Converter();
-    let formatted = desc
+    let formatted = escapeHTML(desc)
         .replace(/\n/g, '<br>')
         .replace(/####Steps to reproduce:/g, '<strong>Steps to reproduce:</strong>')
         .replace(/####Expected result:/g, '<strong>Expected result:</strong>')
