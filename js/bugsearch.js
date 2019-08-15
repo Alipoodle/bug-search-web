@@ -20,10 +20,17 @@
     $('body').on('input',    '#board-field',        searchTrello);
     $('body').on('keypress', '#search-field',       keySearch);
     $('body').on('click',    'a[id*="switch-"]',    switchMode);
-    $('body').on('click', '.reveal-overlay[style^=display], #card-modal .close-button', function (e) {
+    $('body').on('click',    '#card-modal .close-button', function (e) {
         e.preventDefault();
         e.stopPropagation();
         history.back()
+    });
+    $('div.reveal-overlay[style^=display]').on('click', function (e) {
+        if (e.target == $('div.reveal-overlay[style^=display]')[0]) {
+            e.preventDefault();
+            e.stopPropagation();
+            history.back();
+        }
     });
     if (loadTheme()) {
         switchMode();
