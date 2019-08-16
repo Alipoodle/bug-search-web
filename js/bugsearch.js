@@ -161,7 +161,8 @@ function formatAttachments(attachments) {
     return htmlAttachments;
 }
 
-function openCard(cardID, ignore = false) {
+function openCard(cardID, ignore) {
+    ignore = ignore || false;
     if (!ignore) window.history.pushState({card: cardID}, 'Unofficial Discord Bug Searching Tool', '?card='+cardID);
 
     var trelloKey = $('#input-key').val();
