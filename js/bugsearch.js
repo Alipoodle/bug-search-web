@@ -63,7 +63,9 @@ function keySearch(evt) {
 }
 
 var pageNum = 0;
-function searchTrello(newPage = false) {
+function searchTrello(newPage) {
+    newPage = newPage || false;
+    
     var query = $('#search-field').val();
     if (query.trim() == "") { return; }
 
