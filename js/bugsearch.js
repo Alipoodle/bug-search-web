@@ -25,8 +25,12 @@
         e.stopPropagation();
         history.back()
     });
+
+
+
     $('body').on('click', function (e) {
-        if (e.target == $('div.reveal-overlay[style^=display]')[0]) {
+        $modals = $('div.reveal-overlay');
+        if (e.target == $modals[1]) {
             e.preventDefault();
             e.stopPropagation();
             history.back();
@@ -65,7 +69,7 @@ function keySearch(evt) {
 var pageNum = 0;
 function searchTrello(newPage) {
     newPage = newPage || false;
-    
+
     var query = $('#search-field').val();
     if (query.trim() == "") { return; }
 
@@ -153,9 +157,9 @@ function formatAttachments(attachments) {
     attachments.forEach(function(attachment, i) {
         var youtubeURL = attachment.url.match('^(https?://)?(www.)?(youtube.com|youtu.?be)/.+$')
         if (youtubeURL) {
-            htmlAttachments.push('<a href="' + encodeURI(attachment.url) + '">Video '+(i+1)+'</a>');
+            htmlAttachments.push('<a target="_blank" href="' + encodeURI(attachment.url) + '">Video '+(i+1)+'</a>');
         } else {
-            htmlAttachments.push('<a href="' + encodeURI(attachment.url) + '">Image '+(i+1)+'</a>');
+            htmlAttachments.push('<a target="_blank" href="' + encodeURI(attachment.url) + '">Image '+(i+1)+'</a>');
         }
     })
     return htmlAttachments;
