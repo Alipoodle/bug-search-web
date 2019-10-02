@@ -1,11 +1,51 @@
+var boards;
+var mm = {
+    dark: {
+        d: "Light Mode",
+        m: "sun"
+    },
+    light: {
+        d: "Dark Mode",
+        m: "moon"
+    }
+};
+
+var entityMap = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+    '/': '&#x2F;',
+    '=': '&#x3D;'
+};
+
 (function () {
     var trelloKey;
     var trelloToken;
+
     if (typeof(Storage) !== 'undefined') {
-        trelloKey = localStorage.getItem('trello-key');
+        trelloKey   = localStorage.getItem('trello-key');
         trelloToken = localStorage.getItem('trello-token');
+        boards      = localStorage.getItem('boards') || null;
+
+        if (boards) {
+            boards = JSON.parse(boards);
+        }
+        else {
+            boards = {
+                "5771673855f47b547f2decc3": "Desktop",
+                "57f2a306ca14741151990900": "Android",
+                "57f2d333b99965a6ba8cd7e0": "iOS",
+                "5846f7fdfa2f44d1f47267b0": "Linux",
+                "5bc7b4adf7d2b839fa6ac108": "Store",
+                "5cc22e6be84de608c791fdb6": "Web",
+                "5cbfb347e17452475d790070": "Overlay"
+            }
+        }
         $('#input-key').val(trelloKey);
         $('#input-token').val(trelloToken);
+        updateSelect();
     }
 
     window.onpopstate = function(e){
@@ -15,6 +55,7 @@
         }
     };
 
+    $('body').on('input',    '#text-extra-trello',  updateSelect);
     $('body').on('blur',     'input[id*="input-"]', updateTrello);
     $('body').on('blur',     '#search-field',       searchTrello);
     $('body').on('input',    '#board-field',        searchTrello);
@@ -133,13 +174,13 @@ function searchTrello(newPage) {
 
 function formatDesc(desc) {
     var converter = new showdown.Converter();
-    let formatted = escapeHTML(desc)
+    let formatted = desc       // Needs to be made safe.
         .replace(/\n/g, '<br>')
         .replace(/####Steps to reproduce:/g, '<strong>Steps to reproduce:</strong>')
-        .replace(/####Expected result:/g, '<strong>Expected result:</strong>')
-        .replace(/####Actual result:/g, '<strong>Actual result:</strong>')
-        .replace(/####Client settings:/g, '<strong>Client settings:</strong>')
-        .replace(/####System settings:/g, '<strong>System settings:</strong>');
+        .replace(/####Expected result:/g,    '<strong>Expected result:</strong>')
+        .replace(/####Actual result:/g,      '<strong>Actual result:</strong>')
+        .replace(/####Client settings:/g,    '<strong>Client settings:</strong>')
+        .replace(/####System settings:/g,    '<strong>System settings:</strong>');
     formatted = converter.makeHtml(formatted);
     return formatted;
 }
@@ -228,18 +269,21 @@ function updateTrello() {
     localStorage.setItem('trello-token', $('#input-token').val());
 }
 
-// ==============================================
+function updateSelect() {
+    // boards
+    localStorage.setItem('boards', JSON.stringify(boards));
 
-var mm = {
-    dark: {
-        d: "Light Mode",
-        m: "sun"
-    },
-    light: {
-        d: "Dark Mode",
-        m: "moon"
+    $('#board-field').empty();
+    for (var boardID in boards) {
+        const boardName = boards[boardID];
+
+        $('#board-field').append(
+            '<option value="' + escapeHTML(boardID) + '">' + escapeHTML(boardName) + '</option>'
+        );
     }
-};
+}
+
+// ==============================================
 
 function loadTheme() {
     var light = false;
@@ -270,15 +314,7 @@ function switchMode() {
 }
 
 
-var entityMap = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;',
-    '/': '&#x2F;',
-    '=': '&#x3D;'
-  };
+
 
   function escapeHTML (string) {
     return String(string).replace(/[&<>"'=\/]/g, function fromEntityMap (s) {

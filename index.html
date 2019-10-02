@@ -36,17 +36,17 @@
       <h5>Search for a Bug Report</h5>
       <div class="callout mbox">
         <strong>Remember:</strong>
-        <ul>
-          <li>Alternatively you can check the Trello boards and/or bug report channels: <div class="small button-group trello">
+        <p>Alternatively you can check the Trello boards and/or bug report channels:
+          <div class="small button-group trello">
             <a class="button" target="_blank" href="https://trello.com/b/AExxR9lU/desktop-bugs"><i class="fas fa-desktop"></i> Desktop</a>
             <a class="button" target="_blank" href="https://trello.com/b/Vqrkz3KO/android-beta-bugs"><i class="fab fa-android"></i> Android</a>
             <a class="button" target="_blank" href="https://trello.com/b/vLPlnX60/ios-testflight-bugs"><i class="fab fa-apple"></i> iOS</a>
             <a class="button" target="_blank" href="https://trello.com/b/UyU76Esh/linux-bugs"><i class="fab fa-linux"></i> Linux</a>
             <a class="button" target="_blank" href="https://trello.com/b/Fb0LyRnD/store-bugs"><i class="fas fa-store-alt"></i> Store</a>
             <a class="button" target="_blank" href="https://trello.com/b/k6jr4NyY/overlay-bugs"><i class="fas fa-window-restore"></i> Overlay</a>
-          </div></li>
-          <li>To reduce rate limits on Trello, you can enter your <a id="btn-trello-modal" data-open="trello-modal">Trello Key + Token</a> (This is stored local to the machine)</li>
-        </ul>
+          </div>
+        <p>
+        <p>To reduce rate limits on Trello, you can enter your <a id="btn-trello-modal" data-open="trello-modal">Trello Key + Token</a> (This is stored local to the machine)</p>
       </div>
       <label for="search-field">Search:</label>
       <p class="help-text" id="search-help">Use keywords like "Nickname", "Quick Switcher", "Uncaught Exception"<br>
@@ -56,13 +56,13 @@
       <label for="board-field">Board:</label>
       <p class="help-text" id="board-help">Select the board you would like to search on.</p>
       <select id="board-field" aria-describedby="board-help">
-        <option value="5771673855f47b547f2decc3" selected>Desktop</option>
+        <!-- <option value="5771673855f47b547f2decc3" selected>Desktop</option>
         <option value="57f2a306ca14741151990900">Android</option>
         <option value="57f2d333b99965a6ba8cd7e0">iOS</option>
         <option value="5846f7fdfa2f44d1f47267b0">Linux</option>
         <option value="5bc7b4adf7d2b839fa6ac108">Store</option>
         <option value="5cc22e6be84de608c791fdb6">Web</option>
-        <option value="5cbfb347e17452475d790070">Overlay</option>
+        <option value="5cbfb347e17452475d790070">Overlay</option> -->
       </select>
 
       <div id="report-list">
@@ -83,10 +83,11 @@
         <dd>
           <ul>
             <li id="modal-key">Key:
-              <input type="text" id="input-key" aria-describedby="modal-key" required>
+              <input type="text" id="input-key" aria-describedby="modal-key">
             </li>
             <li id="modal-token">Token:
-              <input type="text" id="input-token" aria-describedby="modal-token" required></li>
+              <input type="text" id="input-token" aria-describedby="modal-token">
+            </li>
           </ul>
         </dd>
         <dt>How to get Key + Token</dt>
@@ -100,6 +101,14 @@
             <li>Once you allow it, a screen will appear with a token, copy and paste that into the token box.</li>
           </ul>
         </dd>
+      </dl>
+      <h6></h6>
+      <dl>
+          <dt>Want to add some Custom Trello boards on as well?</dt>
+          <dd>Enter the Trello ID Followed by the name of board you would like to have in the Select Box. A new line for each new Board.<br>
+            E.G. <code>54c9546a17b8e8afa75edf89 Chicago Restaurants</code>
+              <textarea id="text-extra-trello"></textarea>
+          </dd>
       </dl>
       <button type="button" class="close-button" data-close aria-label="Close">
         <span aria-hidden="true">&times;</span>

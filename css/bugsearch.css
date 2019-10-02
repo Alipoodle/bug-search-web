@@ -27,7 +27,7 @@ input:required:invalid {
     border-color: #ff0000;
 }
 
-input[type="text"], select {
+input[type="text"], select, textarea {
     height: 2.125rem;
     font-size: 0.875rem;
     border-radius: 0.1875rem;
@@ -47,7 +47,8 @@ body:not(.light) [type=text]:focus {
 body:not(.light) input[type="text"],
 body:not(.light) select,
 body:not(.light) .input-group-label,
-body:not(.light) div.syntaxbox {
+body:not(.light) div.syntaxbox,
+body:not(.light) textarea {
     background-color: rgba(0,0,0,.1);
     color: #ffffff;
 }
@@ -111,10 +112,6 @@ body.light .help-text {
     background-color: #5970c1;
 }
 
-.trello.button-group a {
-    width: 5.6rem;
-}
-
 .button-group .button {
     border-radius: 0;
 }
@@ -127,10 +124,13 @@ body.light .help-text {
     border-radius: 0 0.1875rem 0.1875rem 0;
 }
 
+.trello.button-group a {
+    width: 5.6rem;
+}
 @media screen and (max-width: 39.9375em) {
     .trello > .button {
         border-radius: 0.1875rem;
-        width: 49%;
+        width: 49% !important;
     }
 }
 
