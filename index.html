@@ -128,6 +128,14 @@
           <span id='card-attachments'></span>
           <br>
           <a id='card-link'>Trello Link</a>
+          <br>
+          <a id="card-toggle-extra">Toggle Extra info</a>
+
+          <div id="card-extra-info" style="display: none;">
+            <hr>
+            <label id='card-comments'></label>
+            <span id='card-cr-cnr'></span>
+          </div>
         </p>
       </div>
       <button type="button" class="close-button" data-close aria-label="Close">
@@ -139,9 +147,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.1/clipboard.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js"></script>
     <script src="js/bugsearch.js"></script>
-    <script>
-      $(document).foundation();
-    </script>
+    <script>$(document).foundation();</script>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-145328931-1"></script>
     <script>

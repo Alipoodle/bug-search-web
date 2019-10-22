@@ -263,3 +263,7 @@ body.light .mbox, body.light .reveal {
 .label-yellow {
     background: #b4a21f;
 }
+
+#card-cr-cnr, #card-comments {
+    white-space: pre-wrap;
+}

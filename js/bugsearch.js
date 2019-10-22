@@ -61,6 +61,7 @@ var entityMap = {
     $('body').on('input',    '#board-field',        searchTrello);
     $('body').on('keypress', '#search-field',       keySearch);
     $('body').on('click',    'a[id*="switch-"]',    switchMode);
+    $('body').on('click',    '#card-toggle-extra',  toggleExtraInfo)
     $('body').on('click',    '#card-modal .close-button', function (e) {
         e.preventDefault();
         e.stopPropagation();
@@ -250,8 +251,46 @@ function openCard(cardID, ignore) {
             $('#card-link').attr('href', encodeURI(data.shortUrl));
             $('#card-attachments').html(attachments.join(" "));
             $('#card-modal').foundation('open');
-            // var popup = new Foundation.Reveal($('#card-modal'));
-            // popup.open();
+
+            // -----------------------------
+
+            $('#card-comments').empty();
+            $('#card-cr-cnr').empty();
+
+            var options = {
+                method: 'GET',
+                url: "https://api.trello.com/1/cards/"+cardID+"/actions?filter=commentCard&alimit=1",
+                data: {
+                    key: trelloKey,
+                    token: trelloToken,
+                }
+            }
+
+            $.ajax(options)
+                .done(function (comments) {
+                    if (!boards[comments[0].data.board.id]) {
+                        comments = null;
+                    }
+
+                    if (!comments) {
+                        $('#card-comments').text("No Comments on Card");
+                    } else {
+                        var crandcnr = getReproRatio(comments);
+                        var filteredComments = filterComments(comments);
+
+                        var usercomments = filteredComments.userComments.join('\n-----------------------\n');
+                        let admincomments = filteredComments.adminComments.join('\n-----------------------\n');
+                        $('#card-cr-cnr').text(
+                            "CR / CNR Ratio" + "\n" +
+                            crandcnr.crs +" / "+ crandcnr.cnrs
+                        );
+                        $('#card-comments').text(
+                            "User Comments:\n" + usercomments + "\n" +
+                            "Admin Comments:\n" + admincomments
+                        );
+                    }
+                });
+
         })
         .fail(function (e) {
             history.back();
@@ -263,6 +302,39 @@ function openCard(cardID, ignore) {
             );
           })
 }
+
+async function getComments (cardID) {
+}
+
+function getReproRatio (comments) {
+    var crs = 0;
+    var cnrs = 0;
+    comments.forEach(comment => {
+        if (comment.memberCreator.id !== '58c07cf2115d7e5848862195') return;
+        if (comment.data.text.includes('Can reproduce.')) {
+            crs = crs + 1;
+        } else if (comment.data.text.includes(`Can't reproduce.`)) {
+            cnrs = cnrs + 1;
+        }
+    })
+    return { crs, cnrs }
+}
+
+function filterComments (comments) {
+    var userComments = [];
+    var adminComments = [];
+    comments.forEach(comment => {
+        if (comment.memberCreator.id === '58c07cf2115d7e5848862195') {
+            if (comment.data.text.includes('Can reproduce.')) return;
+            if (comment.data.text.includes("Can't reproduce.")) return;
+                userComments.push(comment.data.text)
+            } else {
+                adminComments.push(comment.data.text+"\n\n"+comment.memberCreator.fullName);
+            }
+    })
+    return { userComments, adminComments }
+}
+
 
 function updateTrello() {
     localStorage.setItem('trello-key',   $('#input-key').val());
@@ -281,6 +353,10 @@ function updateSelect() {
             '<option value="' + escapeHTML(boardID) + '">' + escapeHTML(boardName) + '</option>'
         );
     }
+}
+
+function toggleExtraInfo() {
+    $('#card-extra-info').toggle();
 }
 
 // ==============================================
