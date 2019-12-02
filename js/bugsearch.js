@@ -247,7 +247,16 @@ function openCard(cardID, ignore) {
             $('#card-badges').html(labels.join(""));
             if (data.closed) { $('#archived-banner').removeClass('hidden'); }
             else             { $('#archived-banner').addClass('hidden'); }
-            $('#card-content').html(formatted);             // Need to fix some issues with this and XSS
+            $('#card-content').html(formatted);
+            $('#card-content code').each(function(i, element) {
+                var e = $(element);
+                e.text(
+                    e.text() .replace(/&amp;/g,  "&") .replace(/&#x2F;/g, "/")
+                             .replace(/&#x3D;/g, "=") .replace(/&lt;/g,   "<")
+                             .replace(/&gt;/g,   ">") .replace(/&quot;/g, '"')
+                             .replace(/&#39;/g,  "'")
+                );
+            });
             $('#card-link').attr('href', encodeURI(data.shortUrl));
             $('#card-attachments').html(attachments.join(" "));
             $('#card-modal').foundation('open');
