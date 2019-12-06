@@ -175,7 +175,7 @@ function searchTrello(newPage) {
 
 function formatDesc(desc) {
     var converter = new showdown.Converter();
-    let formatted = desc       // Needs to be made safe.
+    let formatted = escapeHTML(desc)       // Needs to be made safe.
         .replace(/\n/g, '<br>')
         .replace(/####Steps to reproduce:/g, '<strong>Steps to reproduce:</strong>')
         .replace(/####Expected result:/g,    '<strong>Expected result:</strong>')
@@ -247,7 +247,17 @@ function openCard(cardID, ignore) {
             $('#card-badges').html(labels.join(""));
             if (data.closed) { $('#archived-banner').removeClass('hidden'); }
             else             { $('#archived-banner').addClass('hidden'); }
-            $('#card-content').html(formatted);             // Need to fix some issues with this and XSS
+        
+            $('#card-content').html(formatted);
+            $('#card-content code').each(function(i, element) {
+                var e = $(element);
+                e.text(
+                    e.text() .replace(/&amp;/g,  "&") .replace(/&#x2F;/g, "/")
+                             .replace(/&#x3D;/g, "=") .replace(/&lt;/g,   "<")
+                             .replace(/&gt;/g,   ">") .replace(/&quot;/g, '"')
+                             .replace(/&#39;/g,  "'")
+                );
+            });
             $('#card-link').attr('href', encodeURI(data.shortUrl));
             $('#card-attachments').html(attachments.join(" "));
             $('#card-modal').foundation('open');
