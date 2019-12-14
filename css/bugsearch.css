@@ -1,5 +1,5 @@
 body {
-    font-family: 'Open Sans', sans-serif;
+    font-family: "Open Sans", sans-serif;
     font-weight: 300;
     background-color: #393c40;
     color: #ffffff;
@@ -18,7 +18,9 @@ body.light {
     color: #0a0a0a;
 }
 
-h4, h5, h6 {
+h4,
+h5,
+h6 {
     font-family: inherit;
     font-weight: 600;
 }
@@ -27,21 +29,24 @@ input:required:invalid {
     border-color: #ff0000;
 }
 
-input[type="text"], select, textarea {
+input[type="text"],
+select,
+textarea {
     height: 2.125rem;
     font-size: 0.875rem;
     border-radius: 0.1875rem;
 }
 
 @supports (-webkit-overflow-scrolling: touch) {
-    input[type="text"], select {
+    input[type="text"],
+    select {
         height: 2.4375rem;
         font-size: 1rem;
     }
 }
 
-body:not(.light) [type=text]:focus {
-    background-color: rgba(0,0,0,.1);
+body:not(.light) [type="text"]:focus {
+    background-color: rgba(0, 0, 0, 0.1);
 }
 
 body:not(.light) input[type="text"],
@@ -49,7 +54,7 @@ body:not(.light) select,
 body:not(.light) .input-group-label,
 body:not(.light) div.syntaxbox,
 body:not(.light) textarea {
-    background-color: rgba(0,0,0,.1);
+    background-color: rgba(0, 0, 0, 0.1);
     color: #ffffff;
 }
 
@@ -66,7 +71,7 @@ body:not(.light) select option {
     margin-bottom: 0.5rem;
     font-style: normal;
     font-weight: 400;
-    color: rgba(255,255,255,.8);
+    color: rgba(255, 255, 255, 0.8);
 }
 
 label {
@@ -85,7 +90,6 @@ hr {
     font-size: 13px;
 }
 
-
 body.light label {
     color: #0a0a0a;
 }
@@ -101,6 +105,15 @@ body.light .help-text {
     font-weight: 400;
 }
 
+.switch-paddle,
+.switch-paddle:after {
+    border-radius: 0.1875rem;
+}
+
+input:checked~.switch-paddle {
+    background: #7289da;
+}
+
 .cb-btn {
     position: absolute;
     top: 0;
@@ -108,7 +121,8 @@ body.light .help-text {
     font-size: 0.75rem;
 }
 
-.button:focus, .button:hover {
+.button:focus,
+.button:hover {
     background-color: #5970c1;
 }
 
@@ -116,11 +130,11 @@ body.light .help-text {
     border-radius: 0;
 }
 
-.button-group>:first-child {
+.button-group > :first-child {
     border-radius: 0.1875rem 0 0 0.1875rem;
 }
 
-.button-group>:last-child {
+.button-group > :last-child {
     border-radius: 0 0.1875rem 0.1875rem 0;
 }
 
@@ -153,7 +167,7 @@ body.light .help-text {
     font-size: 0.875rem;
     font-weight: bold;
     color: #ffffff;
-    opacity: .8;
+    opacity: 0.8;
 }
 
 ul .act-pg > a {
@@ -176,7 +190,8 @@ ul .act-pg > a {
     margin-right: 0;
 }
 
-.callout, .reveal {
+.callout,
+.reveal {
     font-size: 0.875rem;
 }
 
@@ -187,9 +202,9 @@ ul .act-pg > a {
 .mbox {
     padding: 1.25rem;
     border-radius: 0.1875rem;
-    border: 0.0625rem solid rgba(0,0,0,.3);
-    color: rgba(255,255,255,.7);
-    background-color: rgba(0,0,0,.1);
+    border: 0.0625rem solid rgba(0, 0, 0, 0.3);
+    color: rgba(255, 255, 255, 0.7);
+    background-color: rgba(0, 0, 0, 0.1);
     font-weight: 400;
     font-size: 0.8125rem;
 }
@@ -198,14 +213,15 @@ body.light .callout {
     color: #0a0a0a;
 }
 
-body.light .mbox, body.light .reveal {
+body.light .mbox,
+body.light .reveal {
     background-color: #f3f3f3;
 }
 
 .warn {
-    background-color: rgba(240,71,71,.3);
+    background-color: rgba(240, 71, 71, 0.3);
     border-radius: 0.1875rem;
-    border: 0.125rem solid rgba(240,71,71,.75);
+    border: 0.125rem solid rgba(240, 71, 71, 0.75);
     color: #ffffff;
     font-weight: bold;
     padding: 0.5rem;
@@ -237,7 +253,7 @@ body.light .mbox, body.light .reveal {
 .label {
     border-radius: 15px;
     font-weight: 600;
-    margin: 0 3px 1px 3px
+    margin: 0 3px 1px 3px;
 }
 .label-sky {
     background: #00c2e0;
@@ -264,6 +280,11 @@ body.light .mbox, body.light .reveal {
     background: #b4a21f;
 }
 
-#card-cr-cnr, #card-comments {
+#card-cr-cnr,
+#card-comments {
     white-space: pre-wrap;
+}
+
+.highlight {
+    color: #b4a21f;
 }

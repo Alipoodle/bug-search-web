@@ -48,9 +48,29 @@
         <p>
         <p>To reduce rate limits on Trello, you can enter your <a id="btn-trello-modal" data-open="trello-modal">Trello Key + Token</a> (This is stored local to the machine)</p>
       </div>
-      <label for="search-field">Search:</label>
-      <p class="help-text" id="search-help">Use keywords like "Nickname", "Quick Switcher", "Uncaught Exception"<br>
-        You can improve searches by using Trello's Special Operators by following this <a href="https://help.trello.com/article/808-searching-for-cards-all-boards">Guide</a></p>
+      <div class="row">
+        <div class="columns large-8 small-12">
+          <label for="search-field">Search:</label>
+            <p class="help-text" id="search-help">Use keywords like "Nickname", "Quick Switcher", "Uncaught Exception"<br>
+              <span id="search-help-specific">
+                You can improve searches by using Trello's Special Operators by following this <a href="https://help.trello.com/article/808-searching-for-cards-all-boards">Guide</a>
+              </span>
+              </p>
+        </div>
+        <div class="columns large-1 small-2">
+          <br class="show-for-large">
+          <div class="switch tiny">
+            <input class="switch-input" id="toggle-search" type="checkbox" name="toggle-search">
+            <label class="switch-paddle" for="toggle-search">
+              <span class="show-for-sr">Toggle Search</span>
+            </label>
+          </div>
+        </div>
+        <div class="columns large-3 small-10">
+          <br class="show-for-large">
+          <p class="help-text" id="search-method">Trello Search</p>
+        </div>
+      </div>
       <input type="text" id="search-field" autocomplete="off" aria-describedby="search-help" required>
 
       <label for="board-field">Board:</label>
@@ -73,7 +93,8 @@
         </div>
       </div>
 
-      <button class="button" onclick="searchTrello(true)">Next page</button>
+      <button class="button" id="search-prev-page">Previous page</button>
+      <button class="button" id="search-next-page">Next page</button>
     </div>
 
     <div class="reveal" id="trello-modal" data-close-on-esc="false" data-reveal>

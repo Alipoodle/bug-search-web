@@ -57,11 +57,14 @@ var entityMap = {
 
     $('body').on('input',    '#text-extra-trello',  updateSelect);
     $('body').on('blur',     'input[id*="input-"]', updateTrello);
-    $('body').on('blur',     '#search-field',       searchTrello);
-    $('body').on('input',    '#board-field',        searchTrello);
+    $('body').on('blur',     '#search-field',       function () {search();});
+    $('body').on('input',    '#board-field',        function () {search();});
+    $('body').on('input',    '#toggle-search',      toggleSearch);
     $('body').on('keypress', '#search-field',       keySearch);
     $('body').on('click',    'a[id*="switch-"]',    switchMode);
-    $('body').on('click',    '#card-toggle-extra',  toggleExtraInfo)
+    $('body').on('click',    '#search-next-page',   function() {search(true);});
+    $('body').on('click',    '#search-prev-page',   function() {search(false);});
+    $('body').on('click',    '#card-toggle-extra',  toggleExtraInfo);
     $('body').on('click',    '#card-modal .close-button', function (e) {
         e.preventDefault();
         e.stopPropagation();
@@ -108,9 +111,32 @@ function keySearch(evt) {
     }
 }
 
+function toggleSearch() {
+    var searchMethod = $('#toggle-search').prop('checked');
+    if (searchMethod === true) {
+        $('#search-method').text("(BETA) ginkoid's Elasticsearch");
+        $('#search-help-specific').html("Search like normal... More fancy searches more help will come later...");
+        // Adding a <code>></code> to the start of the search will allow you to use the Query method instead.
+    }
+    else {
+        $('#search-method').text("Trello Search");
+        $('#search-help-specific').html('You can improve searches by using Trello\'s Special Operators by following this <a href="https://help.trello.com/article/808-searching-for-cards-all-boards">Guide</a>')
+        //
+    }
+
+}
+
 var pageNum = 0;
+function search(newPage) {
+    var searchMethod = $('#toggle-search').prop('checked');
+    if (searchMethod === true) {
+        searchGin_dtesters_es(newPage);
+    }
+    else {
+        searchTrello(newPage);
+    }
+}
 function searchTrello(newPage) {
-    newPage = newPage || false;
 
     var query = $('#search-field').val();
     if (query.trim() == "") { return; }
@@ -119,11 +145,15 @@ function searchTrello(newPage) {
     var trelloKey = $('#input-key').val();
     var trelloToken = $('#input-token').val();
 
-    if (newPage && typeof newPage != 'object') {
+    if (newPage === true) {
         pageNum++;
         $('#board-field')[0].scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
     }
-    else         { pageNum = 0; }
+    else if (newPage === false) {
+        pageNum--;
+        $('#board-field')[0].scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
+    }
+    else { pageNum = 0; }
 
     var options = {
         method: 'GET',
@@ -142,7 +172,7 @@ function searchTrello(newPage) {
     $.ajax(options)
       .done(function (data) {
         $('#report-list').empty();
-        if (data.cards.length == 0) {
+        if (!data.cards || data.cards.length == 0) {
             $('#report-list').append(
                 '<div class="report-item callout mbox">' +
                     '<p class="report-content"><strong>No cards found.</strong></p>' +
@@ -171,6 +201,94 @@ function searchTrello(newPage) {
             '</div>'
         );
       })
+    // End of AJAX
+}
+function searchGin_dtesters_es(newPage) {
+    newPage = newPage;
+
+    var query = $('#search-field').val();
+    if (query.trim() == "") { return; }
+
+    var board = $('#board-field').val();
+
+    if (newPage === true) {
+        pageNum++;
+        $('#board-field')[0].scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
+    }
+    else if (newPage === false) {
+        pageNum--;
+        $('#board-field')[0].scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
+    }
+    else { pageNum = 0; }
+
+    var options = {
+        method: 'GET',
+        url: 'https://gnk.gnk.io/dtesters/search',
+        data: {
+          limit: 25,
+          page: pageNum,
+          board: board,
+          kind: 'approve',
+          sort: 'relevance',
+          //include: 'title,link',
+          highlights: 'first'
+        }
+      };
+      if (query.startsWith('>')) {
+        options.data.query = query.slice(1);
+      } else {
+        options.data.content = query;
+      }
+      $.ajax(options)
+        .done(function (data) {
+            $('#report-list').empty();
+            if (!data.hits || data.hits.length == 0) {
+                $('#report-list').append(
+                    '<div class="report-item callout mbox">' +
+                        '<p class="report-content"><strong>No cards found.</strong></p>' +
+                    '</div>'
+                );
+                return;
+            }
+            data.hits.forEach(function (item) {
+                card = item.event;
+
+                var highlight = item.highlights[0];
+
+                var highlightText = '';
+                if (highlight !== undefined && highlight.key !== 'title') {
+                    highlightText += '(' + highlight.key.charAt(0).toUpperCase() + highlight.key.slice(1) + ') ';
+                    highlight.positions.forEach(function (pos, idx) {
+                        var start = pos.start;
+                        var end   = pos.end;
+                        var prevEnd = (highlight.positions[idx - 1] || { end: 0 }).end;
+                        highlightText += "".concat(highlight.text.slice(prevEnd, start), "<strong class='highlight'>").concat(highlight.text.slice(start, end), "</strong>");
+                    });
+                    highlightText += highlight.text.slice(highlight.positions[highlight.positions.length - 1].end);
+                }
+
+                $('#report-list').append(
+                    '<div class="report-item callout mbox">' +
+                        '<a class="report-title" onclick="openCard(\'' + escapeHTML(card.link) + '\')">' + escapeHTML(card.title) + '</a>' +
+                        '<p class="report-content">' +
+                            (highlightText !== '' ? highlightText : '') +
+                            // (card.closed ? '<strong>This ticket is archived.</strong><br>' : '') +
+                            // (card.list.name ? '<strong>List:</strong> ' + escapeHTML(card.list.name) + '' : '') +
+                        '</p>' +
+                    '</div>'
+                );
+            })
+
+        })
+        .fail(function (e) {
+            $('#report-list').empty();
+            $('#report-list').append(
+                '<div class="report-item callout mbox">' +
+                    '<p class="report-content"><strong>An error occurred while trying to find cards.</strong><br>Provided Error: ' + escapeHTML(e.responseText) + '</p>' +
+                '</div>'
+            );
+        })
+    // End of AJAX
 }
 
 function formatDesc(desc) {
@@ -247,7 +365,7 @@ function openCard(cardID, ignore) {
             $('#card-badges').html(labels.join(""));
             if (data.closed) { $('#archived-banner').removeClass('hidden'); }
             else             { $('#archived-banner').addClass('hidden'); }
-        
+
             $('#card-content').html(formatted);
             $('#card-content code').each(function(i, element) {
                 var e = $(element);
