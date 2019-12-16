@@ -47,6 +47,18 @@ var entityMap = {
         $('#input-token').val(trelloToken);
         updateSelect();
     }
+    else {
+        boards = {
+            "5771673855f47b547f2decc3": "Desktop",
+            "57f2a306ca14741151990900": "Android",
+            "57f2d333b99965a6ba8cd7e0": "iOS",
+            "5846f7fdfa2f44d1f47267b0": "Linux",
+            "5bc7b4adf7d2b839fa6ac108": "Store",
+            "5cc22e6be84de608c791fdb6": "Web",
+            "5cbfb347e17452475d790070": "Overlay"
+        };
+        updateSelect();
+    }
 
     window.onpopstate = function(e){
         if (e.state && e.state.card) { openCard(e.state.card, true); }
@@ -62,16 +74,15 @@ var entityMap = {
     $('body').on('input',    '#toggle-search',      toggleSearch);
     $('body').on('keypress', '#search-field',       keySearch);
     $('body').on('click',    'a[id*="switch-"]',    switchMode);
-    $('body').on('click',    '#search-next-page',   function() {search(true);});
-    $('body').on('click',    '#search-prev-page',   function() {search(false);});
+    // $('body').on('click',    '#search-next-page',   function() {search(true);});
+    // $('body').on('click',    '#search-prev-page',   function() {search(false);});
     $('body').on('click',    '#card-toggle-extra',  toggleExtraInfo);
+
     $('body').on('click',    '#card-modal .close-button', function (e) {
         e.preventDefault();
         e.stopPropagation();
         history.back()
     });
-
-
 
     $('body').on('click', function (e) {
         $modals = $('div.reveal-overlay');
@@ -81,6 +92,13 @@ var entityMap = {
             history.back();
         }
     });
+
+    $(window).scroll(function() {
+        if ($(window).scrollTop() == $(document).height() - $(window).height()) {
+          search(true);
+        }
+    });
+
     if (loadTheme()) {
         switchMode();
     }
@@ -99,6 +117,34 @@ var entityMap = {
         history.replaceState({}, "Unofficial Discord Bug Searching Tool", "./");
         openCard(startCard);
     }
+
+    $('#select-user').select2({
+        theme: "foundation",
+        width: "100%",
+        minimumInputLength: 2,
+        allowClear: true,
+        ajax: {
+            url: "https://gnk.gnk.io/dtesters/users",
+            dataType: 'json',
+            delay: 150, // waits 150 millsecs after finished typing. (reduce requests)
+            data: function (params) { return { limit: "25", prefix: params.term }; },
+            processResults: function (data) {
+                var selectdata = $.map(data.hits, function (obj, idx) {
+                    obj.val - obj.user;
+                    obj.text = obj.user;
+                    return obj;
+                });
+                return { results: selectdata }
+            },
+        },
+        templateResult: function(val) {
+            return val.user || val.text;
+        },
+        templateSelection: function (val) {
+            return val.user || val.text;
+        },
+        placeholder: "Please select a value"
+    })
 })();
 
 
@@ -115,7 +161,7 @@ function toggleSearch() {
     var searchMethod = $('#toggle-search').prop('checked');
     if (searchMethod === true) {
         $('#search-method').text("(BETA) ginkoid's Elasticsearch");
-        $('#search-help-specific').html("Search like normal... More fancy searches more help will come later...");
+        $('#search-help-specific').html("You can search like normal or add a <code>></code> to use Elastic Search's Query engine.");
         // Adding a <code>></code> to the start of the search will allow you to use the Query method instead.
     }
     else {
@@ -127,8 +173,13 @@ function toggleSearch() {
 }
 
 var pageNum = 0;
+var endOfSearch = false;
 function search(newPage) {
     var searchMethod = $('#toggle-search').prop('checked');
+
+    // Escape search if it's detected as of search.
+    if (newPage && endOfSearch) { return; }
+
     if (searchMethod === true) {
         searchGin_dtesters_es(newPage);
     }
@@ -145,15 +196,9 @@ function searchTrello(newPage) {
     var trelloKey = $('#input-key').val();
     var trelloToken = $('#input-token').val();
 
-    if (newPage === true) {
-        pageNum++;
-        $('#board-field')[0].scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
-    }
-    else if (newPage === false) {
-        pageNum--;
-        $('#board-field')[0].scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
-    }
-    else { pageNum = 0; }
+    if (newPage === true) { pageNum++; }
+    // else if (newPage === false) { pageNum--; }
+    else { pageNum = 0; endOfSearch = false; }
 
     var options = {
         method: 'GET',
@@ -171,15 +216,28 @@ function searchTrello(newPage) {
     };
     $.ajax(options)
       .done(function (data) {
-        $('#report-list').empty();
+
         if (!data.cards || data.cards.length == 0) {
-            $('#report-list').append(
-                '<div class="report-item callout mbox">' +
-                    '<p class="report-content"><strong>No cards found.</strong></p>' +
-                '</div>'
-            );
+            if (pageNum == 0) {
+                $('#report-list').empty();
+                $('#report-list').append(
+                    '<div class="report-item callout mbox">' +
+                        '<p class="report-content"><strong>No cards found.</strong></p>' +
+                    '</div>'
+                );
+            }
+            else {
+                $('#report-list').append(
+                    '<p class="help-text">End of search.</p>'
+                );
+                endOfSearch = true;
+            }
             return;
         }
+        if (pageNum == 0) {
+            $('#report-list').empty();
+        }
+
         data.cards.forEach(function (card) {
             $('#report-list').append(
                 '<div class="report-item callout mbox">' +
@@ -211,15 +269,9 @@ function searchGin_dtesters_es(newPage) {
 
     var board = $('#board-field').val();
 
-    if (newPage === true) {
-        pageNum++;
-        $('#board-field')[0].scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
-    }
-    else if (newPage === false) {
-        pageNum--;
-        $('#board-field')[0].scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
-    }
-    else { pageNum = 0; }
+    if (newPage === true) { pageNum++; }
+    // else if (newPage === false) { pageNum--; }
+    else { pageNum = 0; endOfSearch = false; }
 
     var options = {
         method: 'GET',
@@ -230,7 +282,7 @@ function searchGin_dtesters_es(newPage) {
           board: board,
           kind: 'approve',
           sort: 'relevance',
-          //include: 'title,link',
+          include: 'title,link',
           highlights: 'first'
         }
       };
@@ -241,14 +293,28 @@ function searchGin_dtesters_es(newPage) {
       }
       $.ajax(options)
         .done(function (data) {
-            $('#report-list').empty();
             if (!data.hits || data.hits.length == 0) {
-                $('#report-list').append(
-                    '<div class="report-item callout mbox">' +
-                        '<p class="report-content"><strong>No cards found.</strong></p>' +
-                    '</div>'
-                );
+                if (pageNum == 0) {
+                    $('#report-list').empty();
+                    $('#report-list').append(
+                        '<div class="report-item callout mbox">' +
+                            '<p class="report-content"><strong>No cards found.</strong></p>' +
+                        '</div>'
+                    );
+                }
+                else {
+                    $('#report-list').append(
+                        '<p class="help-text">End of search.</p>'
+                    );
+                    endOfSearch = true;
+                }
                 return;
+            }
+            if (pageNum == 0) {
+                $('#report-list').empty();
+                $('#report-list').append(
+                    '<p class="help-text">Total: '+ data.total.value +'</p>'
+                );
             }
             data.hits.forEach(function (item) {
                 card = item.event;
