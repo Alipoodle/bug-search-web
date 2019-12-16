@@ -288,3 +288,24 @@ body.light .reveal {
 .highlight {
     color: #b4a21f;
 }
+
+span.select2-container--foundation,
+.select2-container--foundation .select2-selection--single, .select2-container--foundation .selection .select2-selection--single {
+    border-radius: 0.1875rem;
+}
+
+body:not(.light) .select2-container--foundation .select2-selection,
+body:not(.light) .select2-container--foundation .select2-dropdown {
+    background-color: #333639;
+    color: #ffffff;
+}
+
+body:not(.light) input[type="search"] {
+    border-radius: 0.1875rem !important;
+    background-color: rgb(0, 0, 0, 0.1) !important;
+    color: #ffffff !important;
+}
+
+.select2-container--foundation .select2-selection--single .select2-selection__arrow b, .select2-container--foundation .selection .select2-selection--single .select2-selection__arrow b {
+    border-color: #ccc #0000 #0000 #0000;
+}

@@ -6,8 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Unofficial Discord Bug Searching Tool</title>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6/css/select2.min.css" integrity="sha256-MeSf8Rmg3b5qLFlijnpxk6l+IJkiR91//YGPCrCmogU=" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.3.1/css/foundation.min.css" integrity="sha256-itWEYdFWzZPBG78bJOOiQIn06QCgN/F0wMDcC4nOhxY=" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous" />
+    <link rel="stylesheet" type="text/css" href="css/select2-foundation-theme.min.css" />
     <link rel="stylesheet" type="text/css" href="css/bugsearch.css" />
     <link rel="shortcut icon" href="images/favicon.ico" />
     <link rel="icon" type="image/png" href="images/favicon-192x192.png" sizes="192x192" />
@@ -93,9 +95,11 @@
         </div>
       </div>
 
-      <button class="button" id="search-prev-page">Previous page</button>
-      <button class="button" id="search-next-page">Next page</button>
+      <!-- <button class="button" id="search-prev-page">Previous page</button>
+      <button class="button" id="search-next-page">Next page</button> -->
     </div>
+
+    <!-- ====================================================================================== -->
 
     <div class="reveal" id="trello-modal" data-close-on-esc="false" data-reveal>
       <h4>Please enter your Trello Key + Token</h4>
@@ -136,6 +140,8 @@
       </button>
     </div>
 
+    <!-- ====================================================================================== -->
+
     <div class="reveal" id="card-modal" data-reveal-id="card-modal" data-close-on-esc="false" data-reveal>
       <div id="card">
         <h4 id="card-title"></h4>
@@ -163,10 +169,37 @@
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
+
+    <!-- ====================================================================================== -->
+
+    <div class="reveal" id="search-modal" data-reveal-id="search-modal" data-close-on-esc="false" data-reveal>
+      <div id="card">
+        <h4>Search Builder</h4>
+        <dl>
+          <dt>User</dt>
+          <dd>
+            <ul>
+              <li id="select-user-help">User:
+                <select id="select-user"  aria-describedby="select-user-help"></select>
+              </li>
+              <li id="modal-token">Search term:
+                <!-- <input type="text" id="input-token" aria-describedby="modal-token"> -->
+              </li>
+            </ul>
+          </dd>
+        </dl>
+      </div>
+      <button type="button" class="close-button" data-close aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.3.1/js/foundation.min.js" integrity="sha256-Nd2xznOkrE9HkrAMi4xWy/hXkQraXioBg9iYsBrcFrs=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6/js/select2.full.min.js" integrity="sha256-muuU/82kmjkmqBTDg7kw40olFExg4W4IBfyxGXAuF4M=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.1/clipboard.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js"></script>
+
     <script src="js/bugsearch.js"></script>
     <script>$(document).foundation();</script>
     <!-- Global site tag (gtag.js) - Google Analytics -->
