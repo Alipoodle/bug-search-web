@@ -24,6 +24,9 @@ var entityMap = {
     var trelloKey;
     var trelloToken;
 
+    // =========================
+    //   Trello Stuff + Boards
+    // =========================
     if (typeof(Storage) !== 'undefined') {
         trelloKey   = localStorage.getItem('trello-key');
         trelloToken = localStorage.getItem('trello-token');
@@ -60,6 +63,9 @@ var entityMap = {
         updateSelect();
     }
 
+    // =========================
+    //      Event Handlers
+    // =========================
     window.onpopstate = function(e){
         if (e.state && e.state.card) { openCard(e.state.card, true); }
         else {
@@ -71,8 +77,9 @@ var entityMap = {
     $('body').on('blur',     'input[id*="input-"]', updateTrello);
     $('body').on('blur',     '#search-field',       function () {search();});
     $('body').on('input',    '#board-field',        function () {search();});
-    $('body').on('input',    '#toggle-search',      toggleSearch);
+    $('body').on('change',   '#toggle-search',      toggleSearch);
     $('body').on('keypress', '#search-field',       keySearch);
+    $('body').on('click',    '#buildSearch',        buildSearch);
     $('body').on('click',    'a[id*="switch-"]',    switchMode);
     // $('body').on('click',    '#search-next-page',   function() {search(true);});
     // $('body').on('click',    '#search-prev-page',   function() {search(false);});
@@ -83,7 +90,6 @@ var entityMap = {
         e.stopPropagation();
         history.back()
     });
-
     $('body').on('click', function (e) {
         $modals = $('div.reveal-overlay');
         if (e.target == $modals[1]) {
@@ -98,6 +104,9 @@ var entityMap = {
           search(true);
         }
     });
+    $('body').on('closed.zf.reveal', '#search-modal', function() {
+        $('#search-select-user, #search-must, #search-should, #search-must-not').val([]).trigger("change");
+    })
 
     if (loadTheme()) {
         switchMode();
@@ -118,11 +127,16 @@ var entityMap = {
         openCard(startCard);
     }
 
-    $('#select-user').select2({
+
+    // =========================
+    //        Select 2
+    // =========================
+    $('#search-select-user').select2({
         theme: "foundation",
         width: "100%",
         minimumInputLength: 2,
         allowClear: true,
+        // closeOnSelect: false,
         ajax: {
             url: "https://gnk.gnk.io/dtesters/users",
             dataType: 'json',
@@ -130,24 +144,57 @@ var entityMap = {
             data: function (params) { return { limit: "25", prefix: params.term }; },
             processResults: function (data) {
                 var selectdata = $.map(data.hits, function (obj, idx) {
-                    obj.val - obj.user;
+                    obj.id = obj.user;
+                    obj.val = obj.user;
                     obj.text = obj.user;
                     return obj;
                 });
-                return { results: selectdata }
+                return { results: selectdata };
             },
-        },
-        templateResult: function(val) {
-            return val.user || val.text;
-        },
-        templateSelection: function (val) {
-            return val.user || val.text;
-        },
-        placeholder: "Please select a value"
-    })
+        }
+    });
+
+    $("#search-must, #search-should, #search-must-not").select2({
+        theme: "foundation",
+        width: "100%",
+        tags: true,
+        // closeOnSelect: false,
+        tokenSeparators: [','],
+    });
+    $('#search-must, #search-should, #search-must-not').on('select2:open select2:opening select2:closing', function( event ) {
+        $('.select2-dropdown').css('display', 'none');
+    });
 })();
 
+function buildSearch() {
+    var user = $('#search-select-user').select2('data');
+    var must = $('#search-must').select2('data');
+    var should = $('#search-should').select2('data');
+    var mustnot = $('#search-must-not').select2('data');
 
+    var query = [];
+    if (user.length > 0) {
+        var userString = $.map(user, function(u) { return 'user:"' + u.user + '"'; });
+        query.push("(" + userString.join(" OR ") + ")");
+    }
+    if (must.length > 0) {
+        var mustString = $.map(must, function(m) { return m.text; });
+        query.push("(" + mustString.join(" AND ") + ")");
+    }
+    if (should.length > 0) {
+        var shouldString = $.map(should, function(s) { return s.text; });
+        query.push("(" + shouldString.join(" OR ") + ")");
+    }
+    if (mustnot.length > 0) {
+        var mustnotString = $.map(mustnot, function(mn) { return mn.text; });
+        query.push("NOT (" + mustnotString.join(" AND ") + ")");
+    }
+
+    $('#search-field').val("> " + query.join(" AND "));
+    $('#search-modal').foundation('close');
+
+    search();
+}
 
 function keySearch(evt) {
     var $target = $(evt.target);
@@ -161,13 +208,11 @@ function toggleSearch() {
     var searchMethod = $('#toggle-search').prop('checked');
     if (searchMethod === true) {
         $('#search-method').text("(BETA) ginkoid's Elasticsearch");
-        $('#search-help-specific').html("You can search like normal or add a <code>></code> to use Elastic Search's Query engine.");
-        // Adding a <code>></code> to the start of the search will allow you to use the Query method instead.
+        $('#search-help-specific').html("You can search like normal or add a <code>></code> to use Elastic Search's Query engine [Build basic queries <a id='btn-trello-modal' data-open='search-modal'>here</a>]");
     }
     else {
         $('#search-method').text("Trello Search");
         $('#search-help-specific').html('You can improve searches by using Trello\'s Special Operators by following this <a href="https://help.trello.com/article/808-searching-for-cards-all-boards">Guide</a>')
-        //
     }
 
 }
@@ -286,7 +331,7 @@ function searchGin_dtesters_es(newPage) {
           highlights: 'first'
         }
       };
-      if (query.startsWith('>')) {
+      if (query.indexOf('>') == 0) {
         options.data.query = query.slice(1);
       } else {
         options.data.content = query;
@@ -472,11 +517,11 @@ function openCard(cardID, ignore) {
                         var crandcnr = getReproRatio(comments);
                         var filteredComments = filterComments(comments);
 
-                        var usercomments = filteredComments.userComments.join('\n-----------------------\n');
-                        let admincomments = filteredComments.adminComments.join('\n-----------------------\n');
+                        var usercomments = filteredComments[0].join('\n-----------------------\n');
+                        let admincomments = filteredComments[1].join('\n-----------------------\n');
                         $('#card-cr-cnr').text(
                             "CR / CNR Ratio" + "\n" +
-                            crandcnr.crs +" / "+ crandcnr.cnrs
+                            crandcnr[0] +" / "+ crandcnr[1]
                         );
                         $('#card-comments').text(
                             "User Comments:\n" + usercomments + "\n" +
@@ -497,36 +542,36 @@ function openCard(cardID, ignore) {
           })
 }
 
-async function getComments (cardID) {
-}
+// async function getComments (cardID) {
+// }
 
 function getReproRatio (comments) {
     var crs = 0;
     var cnrs = 0;
-    comments.forEach(comment => {
+    comments.forEach(function(comment) {
         if (comment.memberCreator.id !== '58c07cf2115d7e5848862195') return;
-        if (comment.data.text.includes('Can reproduce.')) {
+        if (comment.data.text.indexOf('Can reproduce.') >= 0) {
             crs = crs + 1;
-        } else if (comment.data.text.includes(`Can't reproduce.`)) {
+        } else if (comment.data.text.indexOf("Can't reproduce.") >= 0) {
             cnrs = cnrs + 1;
         }
-    })
-    return { crs, cnrs }
+    });
+    return [ crs, cnrs ];
 }
 
 function filterComments (comments) {
     var userComments = [];
     var adminComments = [];
-    comments.forEach(comment => {
+    comments.forEach(function (comment) {
         if (comment.memberCreator.id === '58c07cf2115d7e5848862195') {
-            if (comment.data.text.includes('Can reproduce.')) return;
-            if (comment.data.text.includes("Can't reproduce.")) return;
+            if (comment.data.text.indexOf('Can reproduce.') >= 0) return;
+            if (comment.data.text.indexOf("Can't reproduce.") >= 0) return;
                 userComments.push(comment.data.text)
             } else {
                 adminComments.push(comment.data.text+"\n\n"+comment.memberCreator.fullName);
             }
     })
-    return { userComments, adminComments }
+    return [ userComments, adminComments ]
 }
 
 
@@ -583,11 +628,8 @@ function switchMode() {
     setTheme();
 }
 
-
-
-
-  function escapeHTML (string) {
+function escapeHTML (string) {
     return String(string).replace(/[&<>"'=\/]/g, function fromEntityMap (s) {
-      return entityMap[s];
+        return entityMap[s];
     });
-  }
+}

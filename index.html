@@ -176,19 +176,34 @@
       <div id="card">
         <h4>Search Builder</h4>
         <dl>
-          <dt>User</dt>
+        <dt id="search-user-help">User</dt>
+        <dd>
+          <select id="search-select-user" multiple aria-describedby="search-user-help"></select>
+        </dd>
+      </dl>
+      <dl>
+        <dt id="search-must-help">MUST Contain</dt>
+        <dd>
+          <p class="help-text">Split these with a comma for each item that Must exist.</p>
+          <select id="search-must" multiple aria-describedby="search-must-help"></select>
+        </dd>
+      </dl>
+      <dl>
+        <dt id="search-should-help">Contain one of</dt>
           <dd>
-            <ul>
-              <li id="select-user-help">User:
-                <select id="select-user"  aria-describedby="select-user-help"></select>
-              </li>
-              <li id="modal-token">Search term:
-                <!-- <input type="text" id="input-token" aria-describedby="modal-token"> -->
-              </li>
-            </ul>
+          <p class="help-text">Split these with a comma for a list of items that one must be contained.</p>
+          <select id="search-should" multiple aria-describedby="search-should-help"></select>
+        </dd>
+      </dl>
+      <dl>
+        <dt id="search-must-not-help">MUST NOT Contain</dt>
+          <dd>
+          <p class="help-text">Split these with a comma for a list of items that should not match.</p>
+          <select id="search-must-not" multiple aria-describedby="search-must-not-help"></select>
           </dd>
         </dl>
       </div>
+      <button type="button" class="button" id="buildSearch">Create</button>
       <button type="button" class="close-button" data-close aria-label="Close">
         <span aria-hidden="true">&times;</span>
       </button>
