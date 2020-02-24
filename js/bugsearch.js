@@ -10,6 +10,16 @@ var mm = {
     }
 };
 
+var defaultBoards = {
+    "5771673855f47b547f2decc3": "Desktop",
+    "57f2a306ca14741151990900": "Android",
+    "57f2d333b99965a6ba8cd7e0": "iOS",
+    "5846f7fdfa2f44d1f47267b0": "Linux",
+    "5bc7b4adf7d2b839fa6ac108": "Store",
+    "5cc22e6be84de608c791fdb6": "Web",
+    "5cbfb347e17452475d790070": "Overlay"
+};
+
 var entityMap = {
     '&': '&amp;',
     '<': '&lt;',
@@ -36,30 +46,31 @@ var entityMap = {
             boards = JSON.parse(boards);
         }
         else {
-            boards = {
-                "5771673855f47b547f2decc3": "Desktop",
-                "57f2a306ca14741151990900": "Android",
-                "57f2d333b99965a6ba8cd7e0": "iOS",
-                "5846f7fdfa2f44d1f47267b0": "Linux",
-                "5bc7b4adf7d2b839fa6ac108": "Store",
-                "5cc22e6be84de608c791fdb6": "Web",
-                "5cbfb347e17452475d790070": "Overlay"
-            }
+            boards = JSON.parse(JSON.stringify(defaultBoards));
         }
         $('#input-key').val(trelloKey);
         $('#input-token').val(trelloToken);
         updateSelect();
+
+        var textField = $('#text-extra-trello');
+        for (var boardID in boards) {
+            if (defaultBoards[boardID]) { continue; }
+            var boardName = boards[boardID];
+
+            if (textField.val() == "") {
+                textField.val(boardID + " " + boardName);
+            }
+            else {
+                textField.val(
+                    $('#text-extra-trello').val() + "\n" +
+                    boardID + " " + boardName
+                );
+            }
+
+        }
     }
     else {
-        boards = {
-            "5771673855f47b547f2decc3": "Desktop",
-            "57f2a306ca14741151990900": "Android",
-            "57f2d333b99965a6ba8cd7e0": "iOS",
-            "5846f7fdfa2f44d1f47267b0": "Linux",
-            "5bc7b4adf7d2b839fa6ac108": "Store",
-            "5cc22e6be84de608c791fdb6": "Web",
-            "5cbfb347e17452475d790070": "Overlay"
-        };
+        boards = JSON.parse(JSON.stringify(defaultBoards));
         updateSelect();
     }
 
@@ -73,7 +84,7 @@ var entityMap = {
         }
     };
 
-    $('body').on('input',    '#text-extra-trello',  updateSelect);
+    // $('body').on('input',    '#text-extra-trello',  updateSelect);
     $('body').on('blur',     'input[id*="input-"]', updateTrello);
     $('body').on('blur',     '#search-field',       function () {search();});
     $('body').on('input',    '#board-field',        function () {search();});
@@ -84,6 +95,7 @@ var entityMap = {
     // $('body').on('click',    '#search-next-page',   function() {search(true);});
     // $('body').on('click',    '#search-prev-page',   function() {search(false);});
     $('body').on('click',    '#card-toggle-extra',  toggleExtraInfo);
+    $('body').on('click',    '#openboardlink',      openBoardLink);
 
     $('body').on('click',    '#card-modal .close-button', function (e) {
         e.preventDefault();
@@ -106,6 +118,26 @@ var entityMap = {
     });
     $('body').on('closed.zf.reveal', '#search-modal', function() {
         $('#search-select-user, #search-must, #search-should, #search-must-not').val([]).trigger("change");
+    });
+
+    $('body').on('closed.zf.reveal', '#trello-modal', function() {
+        var content = $('#text-extra-trello').val().trim();
+        var lineSplit = content.split('\n');
+
+        boards = JSON.parse(JSON.stringify(defaultBoards));
+
+        lineSplit.forEach(function(e, i) {
+            if (e == "") { return; }
+            var split = e.split(' ');
+            if (split.length <= 2) { return; }
+
+            var boardid = split.shift();
+            var boardname = split.join(" ");
+
+            boards[boardid] = boardname;
+        });
+
+        updateSelect();
     })
 
     if (loadTheme()) {
@@ -136,7 +168,7 @@ var entityMap = {
         width: "100%",
         minimumInputLength: 2,
         allowClear: true,
-        // closeOnSelect: false,
+        closeOnSelect: false,
         ajax: {
             url: "https://gnk.gnk.io/dtesters/users",
             dataType: 'json',
@@ -151,14 +183,18 @@ var entityMap = {
                 });
                 return { results: selectdata };
             },
-        }
+        },
+        placeholder: ""
+    });
+    $('#search-must, #search-should, #search-must-not').on('change', function(e) {
+        $(e.target).next('.select2-container').find('.select2-search__field').val("");
     });
 
     $("#search-must, #search-should, #search-must-not").select2({
         theme: "foundation",
         width: "100%",
         tags: true,
-        // closeOnSelect: false,
+        closeOnSelect: false,
         tokenSeparators: [','],
     });
     $('#search-must, #search-should, #search-must-not').on('select2:open select2:opening select2:closing', function( event ) {
@@ -196,6 +232,9 @@ function buildSearch() {
     search();
 }
 
+
+// #region  Search
+
 function keySearch(evt) {
     var $target = $(evt.target);
     var keyCode = evt.which || evt.keyCode;
@@ -203,12 +242,11 @@ function keySearch(evt) {
         $target.blur();
     }
 }
-
 function toggleSearch() {
     var searchMethod = $('#toggle-search').prop('checked');
     if (searchMethod === true) {
         $('#search-method').text("(BETA) ginkoid's Elasticsearch");
-        $('#search-help-specific').html("You can search like normal or add a <code>></code> to use Elastic Search's Query engine [Build basic queries <a id='btn-trello-modal' data-open='search-modal'>here</a>]");
+        $('#search-help-specific').html("You can search like normal or add a <code>></code> to use Elastic Search's Query engine [Build basic queries <a data-open='search-modal'>here</a>]");
     }
     else {
         $('#search-method').text("Trello Search");
@@ -224,6 +262,16 @@ function search(newPage) {
 
     // Escape search if it's detected as of search.
     if (newPage && endOfSearch) { return; }
+    if ($('#search-field').val().trim() == "") { return; }
+
+    // logHistory(searchMethod);
+
+    if (newPage === undefined) {
+        gtag('event', 'search', {
+            'search_term': $('#search-field').val().trim(),
+            'method': (searchMethod ? "Gin ES" : "Trello")
+        });
+    }
 
     if (searchMethod === true) {
         searchGin_dtesters_es(newPage);
@@ -233,10 +281,7 @@ function search(newPage) {
     }
 }
 function searchTrello(newPage) {
-
     var query = $('#search-field').val();
-    if (query.trim() == "") { return; }
-
     var board = $('#board-field').val();
     var trelloKey = $('#input-key').val();
     var trelloToken = $('#input-token').val();
@@ -310,9 +355,19 @@ function searchGin_dtesters_es(newPage) {
     newPage = newPage;
 
     var query = $('#search-field').val();
-    if (query.trim() == "") { return; }
-
     var board = $('#board-field').val();
+    var isDefault = ($('#board-field option:selected').attr('default') == "true" ? true : false);
+
+    if (isDefault !== true) {
+        alert("This Board ID is not in the default List of Boards!\nThis board cannot be searched on ginkoid's Elasticsearch");
+        $('#report-list').empty();
+        $('#report-list').append(
+            '<div class="report-item callout mbox">' +
+                '<p class="report-content"><strong>No cards found.</strong></p>' +
+            '</div>'
+        );
+        return;
+    }
 
     if (newPage === true) { pageNum++; }
     // else if (newPage === false) { pageNum--; }
@@ -401,7 +456,27 @@ function searchGin_dtesters_es(newPage) {
         })
     // End of AJAX
 }
+// #endregion
 
+var maxHistoryLength = 10;
+function logHistory(searchMethod) {
+
+    var query = $('#search-field').val();
+    var board = $('#board-field').val();
+
+    if (typeof(Storage) !== 'undefined') {
+        var history = JSON.parse(sessionStorage.getItem('history')) || [];
+        history.push({ method: searchMethod, search: query, board: board });
+
+        if (history.length > maxHistoryLength) {
+            history = history.slice(history.length - maxHistoryLength);
+        }
+
+        sessionStorage.setItem('history', JSON.stringify(history));
+    }
+}
+
+// #region  Card and Formatting
 function formatDesc(desc) {
     var converter = new showdown.Converter();
     let formatted = escapeHTML(desc)       // Needs to be made safe.
@@ -414,7 +489,6 @@ function formatDesc(desc) {
     formatted = converter.makeHtml(formatted);
     return formatted;
 }
-
 function formatLabels(labels) {
     var htmlLabel = [];
     labels.forEach(function(label) {
@@ -442,29 +516,36 @@ function openCard(cardID, ignore) {
 
     var trelloKey = $('#input-key').val();
     var trelloToken = $('#input-token').val();
+    var searchMethod = $('#toggle-search').prop('checked');
 
     var options = {
         method: 'GET',
         url: 'https://api.trello.com/1/cards/'+cardID,
         data: {
-          fields: 'desc,name,shortUrl,labels,closed',
-          attachments: 'true',
-          attachment_fields: 'url',
-          members: 'false',
-          membersVoted: 'false',
-          checkItemStates: 'false',
-          checklists: 'none',
-          checklist_fields: 'all',
-          board: 'true',
-          board_fields: 'name,url',
-          list: 'true',
+            fields: 'desc,name,shortUrl,labels,closed',
+            attachments: 'true',
+            attachment_fields: 'url',
+            members: 'false',
+            membersVoted: 'false',
+            checkItemStates: 'false',
+            checklists: 'none',
+            checklist_fields: 'all',
+            board: 'true',
+            board_fields: 'name,url',
+            list: 'true',
 
-          key: trelloKey,
-          token: trelloToken,
+            key: trelloKey,
+            token: trelloToken,
         }
       };
     $.ajax(options)
         .done(function (data) {
+            gtag('event', 'view_item', {
+                'item_id'    : cardID,
+                'search_term': $('#search-field').val().trim(),
+                'method'     : (searchMethod ? "Gin ES" : "Trello")
+            });
+
             formatted   = formatDesc(data.desc);
             labels      = formatLabels(data.labels);
             attachments = formatAttachments(data.attachments);
@@ -542,9 +623,6 @@ function openCard(cardID, ignore) {
           })
 }
 
-// async function getComments (cardID) {
-// }
-
 function getReproRatio (comments) {
     var crs = 0;
     var cnrs = 0;
@@ -573,6 +651,7 @@ function filterComments (comments) {
     })
     return [ userComments, adminComments ]
 }
+//#endregion
 
 
 function updateTrello() {
@@ -584,18 +663,42 @@ function updateSelect() {
     // boards
     localStorage.setItem('boards', JSON.stringify(boards));
 
-    $('#board-field').empty();
-    for (var boardID in boards) {
-        const boardName = boards[boardID];
+    var boardField = $('#board-field');
+    var selected = boardField.val();
 
-        $('#board-field').append(
-            '<option value="' + escapeHTML(boardID) + '">' + escapeHTML(boardName) + '</option>'
+    boardField.empty();
+    for (var boardID in boards) {
+        var boardName = boards[boardID];
+        var isDefault = (defaultBoards[boardID] ? "true" : "false");
+
+        boardField.append(
+            '<option default="' + isDefault + '" value="' + escapeHTML(boardID) + '">' + escapeHTML(boardName) + '</option>'
         );
     }
+
+    setTimeout(function() {
+        boardField.val(selected);
+        if (boardField.val() == null) {
+            boardField.val('5771673855f47b547f2decc3');
+        }
+    }, 1);
+
 }
 
 function toggleExtraInfo() {
     $('#card-extra-info').toggle();
+}
+
+function openBoardLink() {
+    var trelloKey = $('#input-key').val();
+    var trelloToken = $('#input-token').val();
+
+    // https://api.trello.com/1/member/me/boards?fields=id,name&key=009a3edc6174ef8c60d65d8daf1c637b&token=9a31633c0248a6fca80d0958f02bb654e161c65e396622e88d6c28ed9cc9f25a
+    window.open(
+        'https://api.trello.com/1/member/me/boards?fields=id,name' +
+        '&key='    + trelloKey +
+        '&token=' + trelloToken
+    );
 }
 
 // ==============================================

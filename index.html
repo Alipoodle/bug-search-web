@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html class="no-js" lang="en">
-  <head>
+
+<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,199 +15,212 @@
     <link rel="shortcut icon" href="images/favicon.ico" />
     <link rel="icon" type="image/png" href="images/favicon-192x192.png" sizes="192x192" />
     <link rel="apple-touch-icon" href="images/apple-touch-icon-180x180.png" sizes="180x180" />
-  </head>
-  <body>
+</head>
+
+<body>
     <div class="top-bar">
-      <div class="top-bar-left">
-        <ul class="menu show-for-small-only">
-          <li class="menu-text">Unofficial Bug Searching Tool</li>
-          <li class="act-pg"><a href="./"><i class="fas fa-search"></i></a></li>
-          <li><a id="switch-mobile"><i class="far fa-sun"></i></a></li>
-        </ul>
-        <ul class="menu show-for-medium">
-          <li class="menu-text">Unofficial Bug Searching Tool</li>
-          <li class="act-pg"><a href="./"><i class="fas fa-search"></i> Search</a></li>
-        </ul>
-      </div>
-      <div class="top-bar-right show-for-medium">
-        <ul class="menu">
-          <li><a id="switch-desktop"><i class="far fa-sun"></i> Light Mode</a></li>
-        </ul>
-      </div>
+        <div class="top-bar-left">
+            <ul class="menu show-for-small-only">
+                <li class="menu-text">Unofficial Bug Searching Tool</li>
+                <li class="act-pg"><a href="./"><i class="fas fa-search"></i></a></li>
+                <li><a id="switch-mobile"><i class="far fa-sun"></i></a></li>
+            </ul>
+            <ul class="menu show-for-medium">
+                <li class="menu-text">Unofficial Bug Searching Tool</li>
+                <li class="act-pg"><a href="./"><i class="fas fa-search"></i> Search</a></li>
+            </ul>
+        </div>
+        <div class="top-bar-right show-for-medium">
+            <ul class="menu">
+                <li><a id="switch-desktop"><i class="far fa-sun"></i> Light Mode</a></li>
+            </ul>
+        </div>
     </div><br />
     <div class="column row" id="content">
-      <h5>Search for a Bug Report</h5>
-      <div class="callout mbox">
-        <strong>Remember:</strong>
-        <p>Alternatively you can check the Trello boards and/or bug report channels:
-          <div class="small button-group trello">
-            <a class="button" target="_blank" href="https://trello.com/b/AExxR9lU/desktop-bugs"><i class="fas fa-desktop"></i> Desktop</a>
-            <a class="button" target="_blank" href="https://trello.com/b/Vqrkz3KO/android-beta-bugs"><i class="fab fa-android"></i> Android</a>
-            <a class="button" target="_blank" href="https://trello.com/b/vLPlnX60/ios-testflight-bugs"><i class="fab fa-apple"></i> iOS</a>
-            <a class="button" target="_blank" href="https://trello.com/b/UyU76Esh/linux-bugs"><i class="fab fa-linux"></i> Linux</a>
-            <a class="button" target="_blank" href="https://trello.com/b/Fb0LyRnD/store-bugs"><i class="fas fa-store-alt"></i> Store</a>
-            <a class="button" target="_blank" href="https://trello.com/b/k6jr4NyY/overlay-bugs"><i class="fas fa-window-restore"></i> Overlay</a>
-          </div>
-        <p>
-        <p>To reduce rate limits on Trello, you can enter your <a id="btn-trello-modal" data-open="trello-modal">Trello Key + Token</a> (This is stored local to the machine)</p>
-      </div>
-      <div class="row">
-        <div class="columns large-8 small-12">
-          <label for="search-field">Search:</label>
-            <p class="help-text" id="search-help">Use keywords like "Nickname", "Quick Switcher", "Uncaught Exception"<br>
-              <span id="search-help-specific">
-                You can improve searches by using Trello's Special Operators by following this <a href="https://help.trello.com/article/808-searching-for-cards-all-boards">Guide</a>
-              </span>
-              </p>
+        <h5>Search for a Bug Report</h5>
+        <div class="callout mbox">
+            <strong>Remember:</strong>
+            <p>Links to all of the default Boards are below. If you fail to find anything here, try searching in the bug report channels or denied bugs.
+                <div class="small button-group trello">
+                    <a class="button" target="_blank" href="https://trello.com/b/AExxR9lU/desktop-bugs"><i class="fas fa-desktop"></i> Desktop</a>
+                    <a class="button" target="_blank" href="https://trello.com/b/Vqrkz3KO/android-beta-bugs"><i class="fab fa-android"></i> Android</a>
+                    <a class="button" target="_blank" href="https://trello.com/b/vLPlnX60/ios-testflight-bugs"><i class="fab fa-apple"></i> iOS</a>
+                    <a class="button" target="_blank" href="https://trello.com/b/UyU76Esh/linux-bugs"><i class="fab fa-linux"></i> Linux</a>
+                    <a class="button" target="_blank" href="https://trello.com/b/Fb0LyRnD/store-bugs"><i class="fas fa-store-alt"></i> Store</a>
+                    <a class="button" target="_blank" href="https://trello.com/b/k6jr4NyY/overlay-bugs"><i class="fas fa-window-restore"></i> Overlay</a>
+                </div>
+            </p>
+            <p><a data-open="trello-modal">Trello Options & Features</a> | <a data-open="history-modal">Search History</a></p>
         </div>
-        <div class="columns large-1 small-2">
-          <br class="show-for-large">
-          <div class="switch tiny">
-            <input class="switch-input" id="toggle-search" type="checkbox" name="toggle-search">
-            <label class="switch-paddle" for="toggle-search">
-              <span class="show-for-sr">Toggle Search</span>
-            </label>
-          </div>
+        <div class="row">
+            <div class="columns large-8 small-12">
+                <label for="search-field">Search:</label>
+                <p class="help-text" id="search-help">Use keywords like "Nickname", "Quick Switcher", "Uncaught Exception"<br>
+                    <span id="search-help-specific">
+                        You can improve searches by using Trello's Special Operators by following this <a href="https://help.trello.com/article/808-searching-for-cards-all-boards">Guide</a>
+                    </span>
+                </p>
+            </div>
+            <div class="columns large-1 small-2">
+                <br class="show-for-large">
+                <div class="switch tiny">
+                    <input class="switch-input" id="toggle-search" type="checkbox" name="toggle-search">
+                    <label class="switch-paddle" for="toggle-search">
+                        <span class="show-for-sr">Toggle Search</span>
+                    </label>
+                </div>
+            </div>
+            <div class="columns large-3 small-10">
+                <br class="show-for-large">
+                <p class="help-text" id="search-method">Trello Search</p>
+            </div>
         </div>
-        <div class="columns large-3 small-10">
-          <br class="show-for-large">
-          <p class="help-text" id="search-method">Trello Search</p>
-        </div>
-      </div>
-      <input type="text" id="search-field" autocomplete="off" aria-describedby="search-help" required>
+        <input type="text" id="search-field" autocomplete="off" aria-describedby="search-help" required>
 
-      <label for="board-field">Board:</label>
-      <p class="help-text" id="board-help">Select the board you would like to search on.</p>
-      <select id="board-field" aria-describedby="board-help">
-        <!-- <option value="5771673855f47b547f2decc3" selected>Desktop</option>
-        <option value="57f2a306ca14741151990900">Android</option>
-        <option value="57f2d333b99965a6ba8cd7e0">iOS</option>
-        <option value="5846f7fdfa2f44d1f47267b0">Linux</option>
-        <option value="5bc7b4adf7d2b839fa6ac108">Store</option>
-        <option value="5cc22e6be84de608c791fdb6">Web</option>
-        <option value="5cbfb347e17452475d790070">Overlay</option> -->
-      </select>
+        <label for="board-field">Board:</label>
+        <p class="help-text" id="board-help">Select the board you would like to search on.</p>
+        <select id="board-field" aria-describedby="board-help">
+            <!--
+            <option value="5771673855f47b547f2decc3" selected>Desktop</option>
+            <option value="57f2a306ca14741151990900">Android</option>
+            <option value="57f2d333b99965a6ba8cd7e0">iOS</option>
+            <option value="5846f7fdfa2f44d1f47267b0">Linux</option>
+            <option value="5bc7b4adf7d2b839fa6ac108">Store</option>
+            <option value="5cc22e6be84de608c791fdb6">Web</option>
+            <option value="5cbfb347e17452475d790070">Overlay</option>
+            -->
+        </select>
 
-      <div id="report-list">
-        <div class="report-item callout mbox">
-          <p class="report-content">
-            <strong>No cards found.</strong>
-          </p>
+        <div id="report-list">
+            <div class="report-item callout mbox">
+                <p class="report-content">
+                    <strong>No cards found.</strong>
+                </p>
+            </div>
         </div>
-      </div>
-
-      <!-- <button class="button" id="search-prev-page">Previous page</button>
-      <button class="button" id="search-next-page">Next page</button> -->
     </div>
 
     <!-- ====================================================================================== -->
 
     <div class="reveal" id="trello-modal" data-close-on-esc="false" data-reveal>
-      <h4>Please enter your Trello Key + Token</h4>
-      <dl>
-        <dt>Enter Key + Token</dt>
-        <dd>
-          <ul>
-            <li id="modal-key">Key:
-              <input type="text" id="input-key" aria-describedby="modal-key">
-            </li>
-            <li id="modal-token">Token:
-              <input type="text" id="input-token" aria-describedby="modal-token">
-            </li>
-          </ul>
-        </dd>
-        <dt>How to get Key + Token</dt>
-        <dd>
-          <ul>
-            <li>Make sure you are signed into Trello on the web.</li>
-            <li>Head over to <a href="https://trello.com/app-key">https://trello.com/app-key</a></li>
-            <li>Accept the prompt if you haven't previously done it.</li>
-            <li>Copy the displayed Key at the top, and place that into the Key textbox.</li>
-            <li>Below that should be some info on the Token, with a link to generate a key.</li>
-            <li>Once you allow it, a screen will appear with a token, copy and paste that into the token box.</li>
-          </ul>
-        </dd>
-      </dl>
-      <h6></h6>
-      <dl>
-          <dt>Want to add some Custom Trello boards on as well? (WIP Feature)</dt>
-          <dd>Enter the Trello ID Followed by the name of board you would like to have in the Select Box. A new line for each new Board.<br>
-            E.G. <code>54c9546a17b8e8afa75edf89 Chicago Restaurants</code>
-              <textarea id="text-extra-trello"></textarea>
-          </dd>
-      </dl>
-      <button type="button" class="close-button" data-close aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
+        <h4>Trello Options & Features</h4>
+        <dl>
+            <h6>Enter Key + Token</h6>
+            <dd>
+                This allows you to use Custom Boards, and a slightly reduced rate limiting.
+                <ul>
+                    <li id="modal-key">Key:
+                        <input type="text" id="input-key" aria-describedby="modal-key">
+                    </li>
+                    <li id="modal-token">Token:
+                        <input type="text" id="input-token" aria-describedby="modal-token">
+                    </li>
+                </ul>
+            </dd>
+            <dt>How to get Key + Token</dt>
+            <dd>
+                <ul>
+                    <li>Make sure you are signed into Trello on the web.</li>
+                    <li>Head over to <a href="https://trello.com/app-key">https://trello.com/app-key</a></li>
+                    <li>Accept the prompt if you haven't previously done it.</li>
+                    <li>Copy the displayed Key at the top, and place that into the Key textbox.</li>
+                    <li>Below that should be some info on the Token, with a link to generate a key.</li>
+                    <li>Once you allow it, a screen will appear with a token, copy and paste that into the token box.</li>
+                </ul>
+            </dd>
+        </dl>
+        <dl>
+            <h6>Want to add some Custom Trello boards on as well?</h6>
+            <dd>Enter the Trello ID Followed by the name of board you would like to have in the Select Box. A new line for each new Board.
+                To get the list of your Trello Boards and the IDs go to <a id="openboardlink">this link</a><br>
+                E.G. <code>54c9546a17b8e8afa75edf89 Chicago Restaurants</code><br>
+                <textarea id="text-extra-trello" rows="5" class="text-monospace"></textarea>
+            </dd>
+        </dl>
+        <button type="button" class="close-button" data-close aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
     </div>
 
     <!-- ====================================================================================== -->
 
     <div class="reveal" id="card-modal" data-reveal-id="card-modal" data-close-on-esc="false" data-reveal>
-      <div id="card">
-        <h4 id="card-title"></h4>
-        <h6>Board: <span id="card-board"></span></h6>
-        <label>List: <span id="card-list"></span></label>
-        <div id="card-badges"></div>
-        <hr>
-        <div id="archived-banner">This card is archived</div>
-        <p>
-          <span id='card-content'></span>
-          <span id='card-attachments'></span>
-          <br>
-          <a id='card-link'>Trello Link</a>
-          <br>
-          <a id="card-toggle-extra">Toggle Extra info</a>
-
-          <div id="card-extra-info" style="display: none;">
+        <div id="card">
+            <h4 id="card-title"></h4>
+            <h6>Board: <span id="card-board"></span></h6>
+            <label>List: <span id="card-list"></span></label>
+            <div id="card-badges"></div>
             <hr>
-            <label id='card-comments'></label>
-            <span id='card-cr-cnr'></span>
-          </div>
-        </p>
-      </div>
-      <button type="button" class="close-button" data-close aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
+            <div id="archived-banner">This card is archived</div>
+            <p>
+                <span id='card-content'></span>
+                <span id='card-attachments'></span>
+                <br>
+                <a id='card-link'>Trello Link</a>
+                <br>
+                <a id="card-toggle-extra">Toggle Extra info</a>
+
+                <div id="card-extra-info" style="display: none;">
+                    <hr>
+                    <label id='card-comments'></label>
+                    <span id='card-cr-cnr'></span>
+                </div>
+            </p>
+        </div>
+        <button type="button" class="close-button" data-close aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
     </div>
 
     <!-- ====================================================================================== -->
 
     <div class="reveal" id="search-modal" data-reveal-id="search-modal" data-close-on-esc="false" data-reveal>
-      <div id="card">
-        <h4>Search Builder</h4>
-        <dl>
-        <dt id="search-user-help">User</dt>
-        <dd>
-          <select id="search-select-user" multiple aria-describedby="search-user-help"></select>
-        </dd>
-      </dl>
-      <dl>
-        <dt id="search-must-help">MUST Contain</dt>
-        <dd>
-          <p class="help-text">Split these with a comma for each item that Must exist.</p>
-          <select id="search-must" multiple aria-describedby="search-must-help"></select>
-        </dd>
-      </dl>
-      <dl>
-        <dt id="search-should-help">Contain one of</dt>
-          <dd>
-          <p class="help-text">Split these with a comma for a list of items that one must be contained.</p>
-          <select id="search-should" multiple aria-describedby="search-should-help"></select>
-        </dd>
-      </dl>
-      <dl>
-        <dt id="search-must-not-help">MUST NOT Contain</dt>
-          <dd>
-          <p class="help-text">Split these with a comma for a list of items that should not match.</p>
-          <select id="search-must-not" multiple aria-describedby="search-must-not-help"></select>
-          </dd>
-        </dl>
-      </div>
-      <button type="button" class="button" id="buildSearch">Create</button>
-      <button type="button" class="close-button" data-close aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
+        <div id="card">
+            <h4>Search Builder</h4>
+            <dl>
+                <dt id="search-user-help">User</dt>
+                <dd>
+                    <select id="search-select-user" multiple aria-describedby="search-user-help"></select>
+                </dd>
+            </dl>
+            <dl>
+                <dt id="search-must-help">MUST Contain</dt>
+                <dd>
+                    <p class="help-text">Split these with a comma for each item that Must exist.</p>
+                    <select id="search-must" multiple aria-describedby="search-must-help"></select>
+                </dd>
+            </dl>
+            <dl>
+                <dt id="search-should-help">Contain one of</dt>
+                <dd>
+                    <p class="help-text">Split these with a comma for a list of items that one must be contained.</p>
+                    <select id="search-should" multiple aria-describedby="search-should-help"></select>
+                </dd>
+            </dl>
+            <dl>
+                <dt id="search-must-not-help">MUST NOT Contain</dt>
+                <dd>
+                    <p class="help-text">Split these with a comma for a list of items that should not match.</p>
+                    <select id="search-must-not" multiple aria-describedby="search-must-not-help"></select>
+                </dd>
+            </dl>
+        </div>
+        <button type="button" class="button" id="buildSearch">Create</button>
+        <button type="button" class="close-button" data-close aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <!-- ====================================================================================== -->
+
+    <div class="reveal" id="history-modal" data-reveal-id="history-modal" data-close-on-esc="false" data-reveal>
+        <div id="card">
+            <h4>Work in Progress</h4>
+            <p>History is still being recorded, but currently there is no screen for it. Please be pacient for this to be made.</p>
+        </div>
+        <button type="button" class="close-button" data-close aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -216,15 +230,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js"></script>
 
     <script src="js/bugsearch.js"></script>
-    <script>$(document).foundation();</script>
+    <script>
+        $(document).foundation();
+    </script>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-145328931-1"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+        window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
 
-      gtag('config', 'UA-145328931-1');
+        gtag('js', new Date());
+        gtag('config', 'UA-145328931-1');
     </script>
-  </body>
+</body>
+
 </html>
